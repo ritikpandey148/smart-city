@@ -5,11 +5,11 @@ const path = require('path');
 require('dotenv').config();
 
 const authRoutes = require('./routes/auth.routes');
+const complaintRoutes = require('./routes/complaint.routes');
 const { notFound, globalErrorHandler } = require('./middleware/error.middleware');
 
 const app = express();
 
-// Middleware
 app.use(cors({
   origin: process.env.FRONTEND_URL || '*',
   credentials: true
@@ -31,6 +31,7 @@ app.get('/api/health', (req, res) => {
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/complaints', complaintRoutes);
 
 // 404 + Error handlers
 app.use(notFound);
