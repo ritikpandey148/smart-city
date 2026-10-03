@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMART CITY — Smart Citizen, Smart City</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/smart-city-logo.png" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Poppins Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Background image with grayscale + red tint */
+    .hero-bg {
+      position: fixed;
+      inset: 0;
+      background-image: url('assets/images/welcome-bg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: -1;
+    }
+
+    /* Subtle dark overlay for readability */
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.15) 0%,
+        rgba(255,255,255,0.05) 50%,
+        rgba(0,0,0,0.25) 100%
+      );
+    }
+
+    /* Frosted glass effect */
+    .glass {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(14px) saturate(180%);
+      -webkit-backdrop-filter: blur(14px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+   /* Logo blending — background ke saath merge */
+   .smart-logo {
+   mix-blend-mode: multiply;
+   }
+    /* Entrance animations */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .anim-header { animation: fadeDown 0.7s ease-out both; }
+    .anim-logo   { animation: scaleIn 0.9s ease-out 0.15s both; }
+    .anim-tag    { animation: fadeUp 0.7s ease-out 0.45s both; }
+    .anim-btn    { animation: fadeUp 0.7s ease-out 0.6s both; }
+    .anim-footer { animation: fadeUp 0.7s ease-out 0.8s both; }
+
+    /* Welcome button pulse ring (subtle) */
+    @keyframes pulseRing {
+      0%   { box-shadow: 0 0 0 0 rgba(226, 27, 45, 0.55); }
+      70%  { box-shadow: 0 0 0 18px rgba(226, 27, 45, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(226, 27, 45, 0); }
+    }
+    .pulse-ring { animation: pulseRing 2.4s ease-out infinite; }
+
+    /* Arrow slide on hover */
+    .welcome-btn .arrow {
+      transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+    }
+    .welcome-btn:hover .arrow {
+      transform: translateX(6px);
+    }
+    .welcome-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Pill separators */
+    .sep {
+      width: 1px;
+      height: 18px;
+      background: rgba(52, 58, 64, 0.35);
+    }
+
+    /* Bottom feature card divider */
+    .v-divider {
+      width: 1px;
+      height: 60%;
+      background: rgba(52, 58, 64, 0.18);
+    }
+
+    /* Text selection color */
+    ::selection {
+      background: #E21B2D;
+      color: #fff;
+    }
+
+    /* Scrollbar hidden for clean look */
+    body::-webkit-scrollbar { display: none; }
+    body { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+
+<body class="min-h-screen w-full flex flex-col justify-between text-[#343A40]">
+
+  <!-- Fixed Background Image -->
+  <div class="hero-bg"></div>
+
+  <!-- ═══════════════════ HEADER ═══════════════════ -->
+  <header class="relative z-10 w-full px-4 sm:px-6 lg:px-10 pt-5 sm:pt-6 anim-header">
+    <div class="flex items-center justify-between gap-3">
+
+      <!-- LEFT: Mumbai pill -->
+      <div class="glass rounded-full pl-2 pr-4 sm:pl-3 sm:pr-6 py-2 flex items-center gap-2 sm:gap-3 shadow-md max-w-[70vw] overflow-hidden">
+        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#E21B2D] flex items-center justify-center flex-shrink-0 shadow">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" fill="white" stroke-width="0"></i>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3 text-[11px] sm:text-[13px] whitespace-nowrap overflow-hidden">
+          <span class="font-bold text-[#1a1d21] tracking-tight">Mumbai</span>
+          <span class="sep hidden sm:block"></span>
+          <span class="text-[#4a5057] font-medium hidden sm:block">Cleaner City</span>
+          <span class="sep hidden md:block"></span>
+          <span class="text-[#4a5057] font-medium hidden md:block">Safer Roads</span>
+          <span class="sep hidden lg:block"></span>
+          <span class="text-[#4a5057] font-medium hidden lg:block">Better Tomorrow</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Nav links -->
+      <nav class="flex items-center gap-4 sm:gap-8 text-[13px] sm:text-[15px] font-semibold text-[#2a2d31]">
+        <a href="#about" class="hover:text-[#E21B2D] transition-colors duration-200 hover:scale-105">About</a>
+        <a href="#features" class="hover:text-[#E21B2D] transition-colors duration-200 hover:scale-105 hidden sm:inline">Features</a>
+        <a href="#contact" class="hover:text-[#E21B2D] transition-colors duration-200 hover:scale-105 hidden sm:inline">Contact</a>
+      </nav>
+
+    </div>
+  </header>
+
+  <!-- ═══════════════════ HERO (CENTER) ═══════════════════ -->
+  <main class="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-4 sm:px-6 -mt-8 sm:-mt-12">
+
+    <!-- Logo -->
+    <img
+  src="assets/images/smart-city-logo.png"
+  alt="SMART CITY"
+  class="smart-logo anim-logo w-56 sm:w-72 md:w-80 lg:w-[340px] h-auto select-none pointer-events-none"
+  draggable="false"
+/>
+
+    <!-- Tagline -->
+    <h1 class="anim-tag mt-4 sm:mt-5 text-[20px] sm:text-[26px] md:text-[30px] font-medium tracking-tight text-[#2a2d31]">
+      Smart Citizen, <span class="text-[#E21B2D] font-semibold">Smart City</span>
+    </h1>
+
+    <!-- Welcome Button -->
+    <a
+      href="login.html"
+      class="welcome-btn anim-btn pulse-ring mt-9 sm:mt-11 inline-flex items-center justify-center gap-3
+             bg-[#E21B2D] hover:bg-[#c41525] active:bg-[#a8121f]
+             text-white font-medium text-[17px] sm:text-[19px] tracking-wide
+             px-10 sm:px-14 py-3.5 sm:py-4 rounded-full
+             shadow-[0_10px_30px_-8px_rgba(226,27,45,0.7)]
+             transition-all duration-300 ease-out
+             focus:outline-none focus:ring-4 focus:ring-[#E21B2D]/30"
+      style="transition: transform .35s cubic-bezier(.4,0,.2,1), background-color .25s;"
+    >
+      <span>Welcome</span>
+      <i data-lucide="arrow-right" class="arrow w-5 h-5 sm:w-[22px] sm:h-[22px]" stroke-width="2.5"></i>
+    </a>
+
+  </main>
+
+  <!-- ═══════════════════ FOOTER (FEATURES) ═══════════════════ -->
+  <footer class="relative z-10 w-full px-4 sm:px-6 lg:px-10 pb-6 sm:pb-8 anim-footer" id="features">
+    <div class="glass rounded-2xl sm:rounded-full max-w-4xl mx-auto
+                px-4 sm:px-8 py-4 sm:py-5
+                flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-2
+                shadow-lg">
+
+      <!-- Feature 1: Cleaner Surroundings -->
+      <div class="flex items-center gap-3 sm:gap-4 w-full sm:w-auto justify-center sm:justify-start">
+        <div class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="recycle" class="w-8 h-8 sm:w-9 sm:h-9 text-[#E21B2D]" stroke-width="2.2"></i>
+        </div>
+        <div class="leading-tight text-left">
+          <div class="font-bold text-[15px] sm:text-[17px] text-[#1a1d21]">Cleaner</div>
+          <div class="text-[13px] sm:text-[15px] text-[#4a5057] font-normal">Surroundings</div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="hidden sm:block v-divider"></div>
+
+      <!-- Feature 2: Safer Roads -->
+      <div class="flex items-center gap-3 sm:gap-4 w-full sm:w-auto justify-center sm:justify-start">
+        <div class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center flex-shrink-0">
+          <svg viewBox="0 0 24 24" class="w-8 h-8 sm:w-9 sm:h-9" fill="#E21B2D" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L4 22h4l1-4h6l1 4h4L12 2zm-2 12l1-4h2l1 4h-4z"/>
+          </svg>
+        </div>
+        <div class="leading-tight text-left">
+          <div class="font-bold text-[15px] sm:text-[17px] text-[#1a1d21]">Safer</div>
+          <div class="text-[13px] sm:text-[15px] text-[#4a5057] font-normal">Roads</div>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="hidden sm:block v-divider"></div>
+
+      <!-- Feature 3: Better Communities -->
+      <div class="flex items-center gap-3 sm:gap-4 w-full sm:w-auto justify-center sm:justify-start">
+        <div class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="users" class="w-8 h-8 sm:w-9 sm:h-9 text-[#E21B2D]" stroke-width="2.2"></i>
+        </div>
+        <div class="leading-tight text-left">
+          <div class="font-bold text-[15px] sm:text-[17px] text-[#1a1d21]">Better</div>
+          <div class="text-[13px] sm:text-[15px] text-[#4a5057] font-normal">Communities</div>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- Init Lucide Icons -->
+  <script>
+    lucide.createIcons();
+  </script>
+
+</body>
+</html>

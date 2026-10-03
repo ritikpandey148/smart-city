@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — SMART CITY</title>
+
+  <link rel="icon" type="image/png" href="assets/images/smart-city-logo.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    body { margin: 0; background: #f0f1f3; }
+
+    /* Spinner */
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Card fade in */
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .card-in { animation: cardIn 0.6s ease-out both; }
+
+    /* Fade up for text */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up-1 { animation: fadeUp 0.5s ease-out 0.15s both; }
+    .fade-up-2 { animation: fadeUp 0.5s ease-out 0.25s both; }
+    .fade-up-3 { animation: fadeUp 0.5s ease-out 0.35s both; }
+    .fade-up-4 { animation: fadeUp 0.5s ease-out 0.45s both; }
+    .fade-up-5 { animation: fadeUp 0.5s ease-out 0.55s both; }
+
+    /* Input focus ring */
+    .input-wrap:focus-within {
+      border-color: #E21B2D;
+      box-shadow: 0 0 0 3px rgba(226, 27, 45, 0.12);
+    }
+
+    /* Button hover lift */
+    .btn-login {
+      transition: transform 0.25s cubic-bezier(.4,0,.2,1), background-color 0.25s, box-shadow 0.25s;
+    }
+    .btn-login:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 28px -8px rgba(226, 27, 45, 0.6);
+    }
+    .btn-login:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    /* Toggle smooth */
+    .toggle-btn { transition: all 0.3s ease; }
+
+    /* Logo blend (to remove white bg) */
+    .smart-logo { mix-blend-mode: multiply; }
+
+    ::selection { background: #E21B2D; color: white; }
+  </style>
+</head>
+
+<body class="min-h-screen w-full flex items-center justify-center p-3 sm:p-6 md:p-8">
+
+  <!-- Back Button (top-left, floating) -->
+  <a href="index.html"
+     class="fixed top-4 left-4 sm:top-6 sm:left-6 z-50 flex items-center gap-2
+            bg-white/90 hover:bg-white backdrop-blur-md
+            text-[#343A40] hover:text-[#E21B2D]
+            font-medium text-sm
+            px-4 py-2.5 rounded-full
+            shadow-lg hover:shadow-xl
+            transition-all duration-300 hover:-translate-x-1">
+    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+    <span>Back</span>
+  </a>
+
+  <!-- Main Card -->
+  <div class="card-in w-full max-w-[1100px] bg-white rounded-3xl
+              shadow-[0_25px_70px_-20px_rgba(0,0,0,0.25)]
+              overflow-hidden flex flex-col md:flex-row
+              min-h-[640px] md:min-h-[680px]">
+
+    <!-- ═══ LEFT: City Image ═══ -->
+    <div class="hidden md:block md:w-[42%] relative bg-cover bg-center"
+         style="background-image: url('assets/images/login-bg.jpg');">
+      <!-- Soft gradient overlay on right edge -->
+      <div class="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-white/10"></div>
+    </div>
+
+    <!-- ═══ RIGHT: Form ═══ -->
+    <div class="w-full md:w-[58%] relative p-6 sm:p-10 md:p-12 flex flex-col justify-center">
+
+      <!-- Skyline watermark -->
+      <img src="assets/images/skyline-fade.png"
+           alt=""
+           class="absolute bottom-0 left-0 right-0 w-full h-auto opacity-40 pointer-events-none select-none" />
+
+      <!-- Content (above watermark) -->
+      <div class="relative z-10">
+
+        <!-- Logo -->
+        <div class="flex justify-center fade-up-1">
+          <img src="assets/images/smart-city-logo.png"
+               alt="SMART CITY"
+               class="smart-logo w-32 sm:w-36 md:w-40 h-auto select-none"
+               draggable="false" />
+        </div>
+
+        <!-- Tagline -->
+        <p class="text-center mt-3 text-[15px] sm:text-base text-[#4a5057] fade-up-2">
+          Smart Citizen, <span class="text-[#E21B2D] font-semibold">Smart City</span>
+        </p>
+
+        <!-- Toggle: Login | Signup -->
+        <div class="mt-7 sm:mt-8 fade-up-3">
+          <div class="bg-[#f0f1f3] rounded-full p-1 flex relative">
+            <!-- Active pill (Login) -->
+            <button type="button"
+                    class="toggle-btn flex-1 relative z-10 py-2.5 sm:py-3 rounded-full
+                           bg-[#E21B2D] text-white font-semibold text-sm sm:text-[15px]
+                           shadow-[0_6px_16px_-4px_rgba(226,27,45,0.55)]">
+              Login
+            </button>
+            <!-- Inactive (Signup) -->
+            <a href="signup.html"
+               class="toggle-btn flex-1 relative z-10 py-2.5 sm:py-3 rounded-full
+                      text-center text-[#343A40] font-medium text-sm sm:text-[15px]
+                      hover:text-[#E21B2D] flex items-center justify-center">
+              Signup
+            </a>
+          </div>
+        </div>
+
+        <!-- Top Error Banner -->
+        <div id="topError"
+             class="hidden mt-5 fade-up-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-center">
+        </div>
+
+        <!-- Form -->
+        <form id="loginForm" class="mt-6 sm:mt-7 space-y-5 fade-up-4" novalidate>
+
+          <!-- Username -->
+          <div>
+            <label for="username" class="block text-[#1a1d21] font-semibold text-sm mb-2">
+              Username
+            </label>
+            <div class="input-wrap flex items-center gap-3
+                        border border-gray-300 rounded-xl
+                        px-4 py-3 bg-white
+                        transition-all duration-200">
+              <i data-lucide="user" class="w-5 h-5 text-gray-400 flex-shrink-0"></i>
+              <input id="username"
+                     name="username"
+                     type="text"
+                     placeholder="Enter your username"
+                     autocomplete="username"
+                     class="flex-1 outline-none text-[15px] text-[#343A40] placeholder:text-gray-400 bg-transparent" />
+            </div>
+            <p id="usernameError" class="hidden mt-1.5 text-xs text-red-600 font-medium"></p>
+          </div>
+
+          <!-- Password -->
+          <div>
+            <label for="password" class="block text-[#1a1d21] font-semibold text-sm mb-2">
+              Password
+            </label>
+            <div class="input-wrap flex items-center gap-3
+                        border border-gray-300 rounded-xl
+                        px-4 py-3 bg-white
+                        transition-all duration-200">
+              <i data-lucide="lock" class="w-5 h-5 text-gray-400 flex-shrink-0"></i>
+              <input id="password"
+                     name="password"
+                     type="password"
+                     placeholder="Enter your password"
+                     autocomplete="current-password"
+                     class="flex-1 outline-none text-[15px] text-[#343A40] placeholder:text-gray-400 bg-transparent" />
+              <button type="button"
+                      id="togglePassword"
+                      class="text-gray-400 hover:text-[#E21B2D] transition-colors flex-shrink-0 p-0.5"
+                      aria-label="Toggle password visibility">
+                <i data-lucide="eye" class="w-5 h-5"></i>
+              </button>
+            </div>
+            <p id="passwordError" class="hidden mt-1.5 text-xs text-red-600 font-medium"></p>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit"
+                  id="loginBtn"
+                  class="btn-login w-full flex items-center justify-center gap-2
+                         bg-[#E21B2D] hover:bg-[#c41525]
+                         text-white font-semibold text-[15px] sm:text-base
+                         py-3.5 sm:py-4 rounded-xl
+                         shadow-[0_10px_28px_-10px_rgba(226,27,45,0.7)]">
+            <span>Login</span>
+            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          </button>
+
+        </form>
+
+        <!-- Role hint (optional, remove if not needed) -->
+        <p class="text-center text-xs text-gray-400 mt-6 fade-up-5">
+          Login with your citizen, admin or myBMC provider credentials
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+
+</body>
+</html>

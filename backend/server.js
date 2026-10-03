@@ -8,6 +8,7 @@ const authRoutes = require('./routes/auth.routes');
 const complaintRoutes = require('./routes/complaint.routes');
 const adminRoutes = require('./routes/admin.routes');
 const providerRoutes = require('./routes/provider.routes');
+const notificationRoutes = require('./routes/notification.routes');
 const { notFound, globalErrorHandler } = require('./middleware/error.middleware');
 
 const app = express();
@@ -19,10 +20,8 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Static uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Health check
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
@@ -31,13 +30,12 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/provider', providerRoutes);
+app.use('/api/notifications', notificationRoutes);
 
-// 404 + Error handlers
 app.use(notFound);
 app.use(globalErrorHandler);
 
