@@ -109,10 +109,33 @@ const getComplaintHistory = async (id, requesterId, requesterRole) => {
   return await complaintModel.getStatusHistory(id);
 };
 
+// ============ TRACK BY COMPLAINT_ID (SC-XXXX-XXXX) ============
+const trackByComplaintId = async (complaintId, requesterId, requesterRole) => {
+  const complaint = await complaintModel.findByComplaintId(complaintId);
+  if (!complaint) {
+    throw { status: 404, message: 'Complaint not found. Please check the Complaint ID.' };
+  }
+
+  // Access control: citizens can only view their own
+  if (requesterRole === 'citizen' && complaint.user_id !== requesterId) {
+    throw { status: 403, message: 'This complaint does not belong to you.' };
+  }
+  if (requesterRole === 'provider' && complaint.assigned_provider_id !== requesterId) {
+    throw { status: 403, message: 'This complaint is not assigned to you.' };
+  }
+
+  // Get history
+  const history = await complaintModel.getStatusHistory(complaint.id);
+
+  // Get full detail
+  const full = await complaintModel.findById(complaint.id);
+
+  return { complaint: full, history };
+};
+
 // ============ GET MY STATS ============
 const getMyStats = async (userId) => {
   const stats = await complaintModel.getUserStats(userId);
-  // Convert null to 0
   return {
     total: Number(stats.total) || 0,
     garbage: Number(stats.garbage) || 0,
@@ -125,10 +148,12 @@ const getMyStats = async (userId) => {
   };
 };
 
+
 module.exports = {
   createComplaint,
   getMyComplaints,
   getComplaintById,
   getComplaintHistory,
+  trackByComplaintId,
   getMyStats
 };

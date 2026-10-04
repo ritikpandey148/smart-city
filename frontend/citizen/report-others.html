@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Report Others — SMART CITY</title>
+
+  <link rel="icon" type="image/png" href="../assets/images/smart-city-logo.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    body { margin: 0; background: #f0f1f3; }
+
+    .spinner, .spinner-sm {
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    .spinner { width: 20px; height: 20px; }
+    .spinner-sm { width: 14px; height: 14px; border-width: 2px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.45s ease-out both; }
+    .d-1 { animation-delay: 0.05s; }
+    .d-2 { animation-delay: 0.10s; }
+    .d-3 { animation-delay: 0.15s; }
+
+    .custom-marker { background: transparent; border: none; }
+    #locationMap { height: 260px; width: 100%; border-radius: 14px; z-index: 1; }
+
+    .section-num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: #E21B2D;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .upload-zone {
+      border: 2px dashed #fbb6bc;
+      background: #fff8f9;
+      border-radius: 14px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .upload-zone:hover {
+      border-color: #E21B2D;
+      background: #fff5f6;
+    }
+    .upload-zone.drag-over {
+      border-color: #E21B2D;
+      background: #ffe5e8;
+      transform: scale(1.01);
+    }
+
+    .field-input {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #343A40;
+      outline: none;
+      transition: all 0.2s;
+      background: #fff;
+    }
+    .field-input::placeholder { color: #9ca3af; }
+    .field-input:focus {
+      border-color: #E21B2D;
+      box-shadow: 0 0 0 3px rgba(226, 27, 45, 0.12);
+    }
+    .field-input.border-red-500 { border-color: #ef4444; }
+    textarea.field-input { resize: vertical; min-height: 100px; }
+
+    .loc-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 2px solid #e5e7eb;
+      background: #f8f9fa;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+    }
+    .loc-btn:hover { border-color: #d1d5db; }
+    .loc-btn.active {
+      border-color: #E21B2D;
+      background: #fff5f6;
+      color: #E21B2D;
+    }
+    .loc-btn.active .loc-title { color: #E21B2D; }
+    .loc-btn .loc-icon {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      color: #E21B2D;
+      flex-shrink: 0;
+    }
+    .loc-btn .loc-title { font-size: 14px; font-weight: 600; color: #1a1d21; }
+    .loc-btn .loc-sub { font-size: 11.5px; color: #6b7280; margin-top: 2px; }
+    .loc-btn.active .loc-sub { color: #E21B2D; opacity: 0.8; }
+
+    /* Observation pills */
+    .obs-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 18px;
+      border-radius: 12px;
+      border: 2px solid #e5e7eb;
+      background: #f8f9fa;
+      font-size: 13px;
+      font-weight: 500;
+      color: #4a5057;
+      cursor: pointer;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .obs-pill:hover {
+      background: #fff5f6;
+      border-color: #fdd;
+    }
+    .obs-pill.active {
+      background: #fff5f6;
+      border-color: #E21B2D;
+      color: #E21B2D;
+    }
+    .obs-pill.active svg { color: #E21B2D; }
+
+    .ss-root { position: relative; }
+    .ss-trigger {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 12px 16px;
+      background: #fff;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 46px;
+    }
+    .ss-trigger:hover { border-color: #9ca3af; }
+    .ss-trigger.border-red-500 { border-color: #ef4444; }
+    .ss-value {
+      flex: 1; font-size: 14px; color: #343A40;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      user-select: none;
+    }
+    .ss-placeholder-mode { color: #9ca3af; }
+    .ss-arrow { transition: transform 0.25s; color: #9ca3af; flex-shrink: 0; }
+    .ss-panel {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0; right: 0;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.18);
+      z-index: 60;
+      max-height: 260px;
+      overflow: hidden;
+      animation: ssIn 0.18s ease-out;
+    }
+    @keyframes ssIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .ss-panel.ss-open { display: flex; flex-direction: column; }
+    .ss-search-wrap {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f3f5;
+      background: #fafbfc;
+    }
+    .ss-search {
+      flex: 1; outline: none; border: none;
+      background: transparent; font-size: 13px; color: #343A40;
+    }
+    .ss-options { overflow-y: auto; max-height: 200px; padding: 4px 0; }
+    .ss-options::-webkit-scrollbar { width: 5px; }
+    .ss-options::-webkit-scrollbar-thumb { background: #cbd0d6; border-radius: 10px; }
+    .ss-option {
+      padding: 9px 16px; font-size: 13px; color: #343A40;
+      cursor: pointer; transition: background 0.12s, color 0.12s;
+    }
+    .ss-option:hover { background: #fff5f6; color: #E21B2D; }
+    .ss-option.ss-selected { background: #E21B2D; color: #fff; font-weight: 500; }
+    .ss-no-results { padding: 16px; text-align: center; color: #9ca3af; font-size: 13px; }
+
+    .submit-btn {
+      transition: transform 0.25s cubic-bezier(.4,0,.2,1), background-color 0.25s, box-shadow 0.25s;
+    }
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 30px -10px rgba(226, 27, 45, 0.6);
+    }
+
+    #mobileDrawer { transition: transform 0.3s ease-out; }
+
+    input::-webkit-credentials-auto-fill-button { display: none !important; }
+
+    ::selection { background: #E21B2D; color: white; }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <!-- ════════ HEADER ════════ -->
+  <header class="sticky top-0 z-30 bg-white/85 backdrop-blur-md border-b border-gray-100">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+
+      <a href="dashboard.html" class="flex items-center gap-2.5 flex-shrink-0">
+        <img src="../assets/images/smart-city-logo.png" alt="SMART CITY" class="w-11 h-11 object-contain" style="mix-blend-mode: multiply;" />
+        <div class="hidden sm:block">
+          <div class="text-[15px] font-bold text-[#1a1d21] leading-tight">
+            <span class="text-[#343A40]">SMART</span> <span class="text-[#E21B2D]">CITY</span>
+          </div>
+          <div class="text-[10.5px] text-[#6b7280] leading-tight">Smart Citizen, Smart City</div>
+        </div>
+      </a>
+
+      <div class="flex items-center gap-2">
+        <button class="w-10 h-10 rounded-full bg-[#343A40] text-white font-semibold text-[15px] flex items-center justify-center shadow-md">
+          <span id="userAvatar">C</span>
+        </button>
+        <button id="menuToggle" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="menu" class="w-5 h-5 text-[#343A40]"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ════════ MOBILE DRAWER ════════ -->
+  <div id="drawerBackdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40"></div>
+
+  <aside id="mobileDrawer"
+         class="fixed right-0 top-0 bottom-0 w-[280px] bg-white z-50 flex flex-col shadow-2xl"
+         style="transform: translateX(100%); transition: transform 0.3s ease-out;">
+
+    <div class="px-5 pt-5 pb-4 flex items-center justify-between border-b border-gray-100">
+      <span class="text-[15px] font-bold text-[#1a1d21]">Menu</span>
+      <button id="drawerClose" class="p-1.5 hover:bg-gray-100 rounded-lg">
+        <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+      </button>
+    </div>
+
+    <nav class="flex-1 px-3 py-3 overflow-y-auto">
+      <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50 transition-colors">
+        <i data-lucide="home" class="w-[18px] h-[18px]"></i> Dashboard
+      </a>
+      <a href="report-garbage.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50 transition-colors">
+        <i data-lucide="trash-2" class="w-[18px] h-[18px]"></i> Report Garbage
+      </a>
+      <a href="report-potholes.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50 transition-colors">
+        <i data-lucide="construction" class="w-[18px] h-[18px]"></i> Report Pothole
+      </a>
+      <a href="report-others.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium bg-[#E21B2D] text-white shadow-md transition-colors">
+        <i data-lucide="layout-grid" class="w-[18px] h-[18px]"></i> Report Others
+      </a>
+      <a href="complaints.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50 transition-colors">
+        <i data-lucide="file-text" class="w-[18px] h-[18px]"></i> My Complaints
+      </a>
+      <a href="track-status.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50 transition-colors">
+        <i data-lucide="map-pin" class="w-[18px] h-[18px]"></i> Track Status
+      </a>
+      <a href="profile.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50 transition-colors">
+        <i data-lucide="user" class="w-[18px] h-[18px]"></i> Profile
+      </a>
+      <a href="help.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50 transition-colors">
+        <i data-lucide="headphones" class="w-[18px] h-[18px]"></i> Help &amp; Support
+      </a>
+      <button data-logout class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#E21B2D] hover:bg-red-50 transition-colors mt-2">
+        <i data-lucide="log-out" class="w-[18px] h-[18px]"></i> Logout
+      </button>
+    </nav>
+  </aside>
+
+  <!-- ════════ MAIN ════════ -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-5">
+
+    <button id="backBtn" class="fade-up d-1 flex items-center gap-2 bg-white hover:bg-gray-50 text-[#343A40] hover:text-[#E21B2D] text-[13px] font-medium px-4 py-2.5 rounded-full shadow-sm hover:shadow-md transition-all">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      <span>Back to Dashboard</span>
+    </button>
+
+    <!-- ═══ HERO BANNER (Light Pink) ═══ -->
+    <section class="fade-up d-2 relative rounded-2xl overflow-hidden shadow-[0_15px_40px_-15px_rgba(226,27,45,0.35)]"
+             style="background: linear-gradient(135deg, #fde8ea 0%, #fbd5d9 50%, #f8c4ca 100%);">
+      <div class="absolute inset-0 opacity-40 bg-cover bg-center mix-blend-multiply"
+           style="background-image: url('../assets/images/others-hero.jpg'), url('../assets/images/login-bg.jpg');"></div>
+      <div class="relative z-10 px-6 sm:px-8 py-7 sm:py-9 flex items-center gap-5">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-lg">
+          <i data-lucide="layout-grid" class="w-8 h-8 sm:w-10 sm:h-10 text-[#E21B2D]"></i>
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-[26px] sm:text-[34px] font-bold text-[#E21B2D] leading-tight">Report Others</h1>
+          <p class="text-[13px] sm:text-[15px] text-[#343A40]/85 mt-1 leading-snug">
+            Report street lights, water logging, stray animals, broken signals and more.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ FORM CARD ═══ -->
+    <section class="fade-up d-3 bg-white rounded-2xl shadow-sm p-5 sm:p-7">
+
+      <div id="topError"
+           class="hidden mb-5 text-[13px] text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-center">
+      </div>
+
+      <form id="reportForm" novalidate class="space-y-6">
+
+        <!-- 1. UPLOAD -->
+        <div>
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex items-center gap-3">
+              <span class="section-num">1</span>
+              <h2 class="text-[15px] font-bold text-[#1a1d21]">Upload Image</h2>
+            </div>
+            <span class="text-[12px] text-[#6b7280] hidden sm:inline">Add a clear photo of the issue.</span>
+          </div>
+
+          <div id="uploadArea" class="upload-zone px-6 py-8 text-center">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white shadow-sm mb-3">
+              <i data-lucide="image-plus" class="w-7 h-7 text-[#E21B2D]"></i>
+            </div>
+            <p class="text-[14.5px] font-semibold text-[#1a1d21]">Click to upload an image</p>
+            <p class="text-[12px] text-[#6b7280] mt-0.5">JPG, PNG, PDF (Max 5 MB)</p>
+            <button type="button" id="cameraBtn"
+                    class="mt-3 inline-flex items-center gap-2 text-[12.5px] text-[#E21B2D] hover:underline font-medium">
+              <i data-lucide="camera" class="w-4 h-4"></i>
+              Use Camera Instead
+            </button>
+          </div>
+
+          <input type="file" id="fileInput" accept="image/jpeg,image/jpg,image/png,application/pdf" class="hidden" />
+          <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" />
+
+          <div id="imagePreview" class="hidden relative rounded-2xl overflow-hidden border-2 border-[#E21B2D]/30 bg-[#fff8f9]">
+            <img id="previewImg" alt="" class="w-full h-56 sm:h-64 object-cover" />
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 flex items-center justify-between gap-3">
+              <span id="fileName" class="text-white text-[12px] font-medium truncate"></span>
+              <button type="button" id="removeImage"
+                      class="flex-shrink-0 w-9 h-9 rounded-full bg-white/95 hover:bg-white flex items-center justify-center shadow-lg transition-all">
+                <i data-lucide="trash-2" class="w-4 h-4 text-[#E21B2D]"></i>
+              </button>
+            </div>
+          </div>
+          <p id="imageError" class="hidden mt-2 text-[12px] text-red-600 font-medium"></p>
+        </div>
+
+        <!-- 2. TITLE -->
+        <div>
+          <div class="flex items-center gap-3 mb-2.5">
+            <span class="section-num">2</span>
+            <h2 class="text-[15px] font-bold text-[#1a1d21]">Title</h2>
+          </div>
+          <input id="title" type="text" maxlength="150"
+                 placeholder="Enter a short title (e.g. Street Light Not Working)"
+                 class="field-input" />
+          <p id="titleError" class="hidden mt-1.5 text-[12px] text-red-600 font-medium"></p>
+        </div>
+
+        <!-- 3. DESCRIPTION -->
+        <div>
+          <div class="flex items-center gap-3 mb-2.5">
+            <span class="section-num">3</span>
+            <h2 class="text-[15px] font-bold text-[#1a1d21]">Description</h2>
+          </div>
+          <div class="relative">
+            <textarea id="description" rows="4" maxlength="300"
+                      placeholder="Provide more details about the issue..."
+                      class="field-input pb-8"></textarea>
+            <span id="descCounter" class="absolute bottom-3 right-4 text-[11.5px] text-[#9ca3af] font-medium pointer-events-none">0/300</span>
+          </div>
+          <p id="descriptionError" class="hidden mt-1.5 text-[12px] text-red-600 font-medium"></p>
+        </div>
+
+        <!-- 4. LOCATION -->
+        <div>
+          <div class="flex items-center gap-3 mb-3">
+            <span class="section-num">4</span>
+            <h2 class="text-[15px] font-bold text-[#1a1d21]">Location</h2>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3 mb-3">
+            <div class="loc-btn active" id="locMapBtn">
+              <div class="loc-icon"><i data-lucide="map-pin" class="w-6 h-6"></i></div>
+              <div>
+                <div class="loc-title">Select Location on Map</div>
+                <div class="loc-sub">Tap on map to choose location</div>
+              </div>
+            </div>
+            <button type="button" class="loc-btn" id="useCurrentLoc">
+              <div class="loc-icon"><i data-lucide="crosshair" class="w-6 h-6 text-[#343A40]"></i></div>
+              <div>
+                <div class="loc-title">Use My Current Location</div>
+                <div class="loc-sub">Detects your nearby location</div>
+              </div>
+            </button>
+          </div>
+
+          <div class="relative rounded-2xl overflow-hidden border border-gray-200 shadow-sm">
+            <div id="locationMap"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[2] pointer-events-none hidden sm:block">
+              <div class="bg-white/95 backdrop-blur px-4 py-2 rounded-lg shadow-md text-[12px] font-medium text-[#343A40] whitespace-nowrap">
+                Tap to select location
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+            <div>
+              <label class="block text-[12.5px] font-semibold text-[#1a1d21] mb-1.5">Selected Locality</label>
+              <div id="localitySelect" class="ss-root">
+                <div class="ss-trigger">
+                  <i data-lucide="map-pin" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
+                  <span class="ss-value ss-placeholder-mode">Select area / landmark</span>
+                  <i data-lucide="chevron-down" class="ss-arrow w-4 h-4"></i>
+                </div>
+                <div class="ss-panel">
+                  <div class="ss-search-wrap">
+                    <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                    <input type="text" class="ss-search" placeholder="Search locality..." />
+                  </div>
+                  <div class="ss-options"></div>
+                </div>
+                <input type="hidden" name="locality" />
+              </div>
+              <p id="localityError" class="hidden mt-1 text-[11.5px] text-red-600 font-medium"></p>
+            </div>
+            <div>
+              <label class="block text-[12.5px] font-semibold text-[#1a1d21] mb-1.5">Pincode</label>
+              <div id="pincodeSelect" class="ss-root">
+                <div class="ss-trigger">
+                  <i data-lucide="hash" class="w-4 h-4 text-gray-400 flex-shrink-0"></i>
+                  <span class="ss-value ss-placeholder-mode">Select locality first</span>
+                  <i data-lucide="chevron-down" class="ss-arrow w-4 h-4"></i>
+                </div>
+                <div class="ss-panel">
+                  <div class="ss-search-wrap">
+                    <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                    <input type="text" class="ss-search" placeholder="Search pincode..." />
+                  </div>
+                  <div class="ss-options"></div>
+                </div>
+                <input type="hidden" name="pincode" />
+              </div>
+              <p id="pincodeError" class="hidden mt-1 text-[11.5px] text-red-600 font-medium"></p>
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <label class="block text-[12.5px] font-semibold text-[#1a1d21] mb-1.5">Nearby Address / Landmark (Optional)</label>
+            <input id="nearbyAddress" type="text" maxlength="150"
+                   placeholder="e.g. Near Kandivali Station, SV Road"
+                   class="field-input" />
+          </div>
+        </div>
+
+     <!-- 5. OBSERVATION -->
+<div>
+  <div class="flex flex-wrap items-baseline gap-3 mb-3">
+    <div class="flex items-center gap-3">
+      <span class="section-num">5</span>
+      <h2 class="text-[15px] font-bold text-[#1a1d21]">Observation <span class="text-[#9ca3af] font-normal">(Optional)</span></h2>
+    </div>
+    <span class="text-[12px] text-[#6b7280]">Since when is this issue present?</span>
+  </div>
+
+  <div class="flex flex-wrap gap-2.5">
+    <button type="button" class="obs-pill" data-observation="seen_daily">
+      <i data-lucide="repeat-2" class="w-4 h-4"></i>
+      <span>Seen on daily basis</span>
+    </button>
+    <button type="button" class="obs-pill" data-observation="few_days">
+      <i data-lucide="calendar-days" class="w-4 h-4"></i>
+      <span>From few days</span>
+    </button>
+    <button type="button" class="obs-pill" data-observation="today_only">
+      <i data-lucide="sun" class="w-4 h-4"></i>
+      <span>From today only</span>
+    </button>
+  </div>
+</div>
+
+        <!-- SUBMIT -->
+        <button type="submit" id="submitBtn"
+                class="submit-btn w-full flex items-center justify-center gap-3
+                       bg-[#E21B2D] hover:bg-[#c41525] active:bg-[#a8121f]
+                       text-white font-semibold text-[15px]
+                       py-4 rounded-xl
+                       shadow-[0_12px_28px_-10px_rgba(226,27,45,0.6)]">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          <span>Submit Report</span>
+        </button>
+
+      </form>
+    </section>
+  </main>
+
+  <!-- SUCCESS MODAL -->
+  <div id="successModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[80] items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 sm:p-8 text-center fade-up">
+      <div class="w-20 h-20 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-4">
+        <i data-lucide="check-circle-2" class="w-11 h-11 text-green-600"></i>
+      </div>
+      <h2 class="text-[22px] font-bold text-[#1a1d21]">Report Submitted!</h2>
+      <p class="text-[13.5px] text-[#6b7280] mt-2">Your report has been successfully registered.</p>
+
+      <div class="mt-5 bg-[#fff5f6] border border-[#fdd] rounded-xl px-4 py-3">
+        <div class="text-[11.5px] text-[#6b7280] uppercase tracking-wide font-semibold">Complaint ID</div>
+        <div id="successComplaintId" class="text-[19px] font-bold text-[#E21B2D] mt-0.5">SC-2026-0001</div>
+      </div>
+
+      <div class="mt-6 flex flex-col sm:flex-row gap-3">
+        <button id="successTrackBtn"
+                class="flex-1 bg-[#E21B2D] hover:bg-[#c41525] text-white font-semibold text-[14px] py-3 rounded-xl shadow-md transition-all">
+          Track Status
+        </button>
+        <button id="successComplaintsBtn"
+                class="flex-1 bg-gray-100 hover:bg-gray-200 text-[#343A40] font-semibold text-[14px] py-3 rounded-xl transition-all">
+          My Complaints
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/guard.js"></script>
+  <script src="../js/locality.js"></script>
+  <script src="../js/select.js"></script>
+  <script src="../js/report.js"></script>
+  <script>
+    lucide.createIcons();
+    ReportPage.init('others');
+  </script>
+
+</body>
+</html>

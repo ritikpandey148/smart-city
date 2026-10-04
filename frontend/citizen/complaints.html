@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Complaints — SMART CITY</title>
+
+  <link rel="icon" type="image/png" href="../assets/images/smart-city-logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    body { margin: 0; background: #f0f1f3; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.4s ease-out both; }
+    .d-1 { animation-delay: 0.05s; }
+    .d-2 { animation-delay: 0.10s; }
+    .d-3 { animation-delay: 0.15s; }
+
+    #mobileDrawer { transition: transform 0.3s ease-out; }
+
+    .tab-btn {
+      transition: all 0.2s ease;
+      position: relative;
+      white-space: nowrap;
+    }
+    .tab-btn.active {
+      background: #E21B2D;
+      color: #fff;
+      box-shadow: 0 6px 18px -6px rgba(226,27,45,0.5);
+    }
+
+    ::selection { background: #E21B2D; color: white; }
+    input::-webkit-credentials-auto-fill-button { display: none !important; }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <!-- ════════ HEADER ════════ -->
+  <header class="sticky top-0 z-30 bg-white/85 backdrop-blur-md border-b border-gray-100">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+
+      <a href="dashboard.html" class="flex items-center gap-2.5 flex-shrink-0">
+        <img src="../assets/images/smart-city-logo.png" alt="SMART CITY" class="w-11 h-11 object-contain" style="mix-blend-mode: multiply;" />
+        <div class="hidden sm:block">
+          <div class="text-[15px] font-bold leading-tight">
+            <span class="text-[#343A40]">SMART</span> <span class="text-[#E21B2D]">CITY</span>
+          </div>
+          <div class="text-[10.5px] text-[#6b7280] leading-tight">Smart Citizen, Smart City</div>
+        </div>
+      </a>
+
+      <div class="flex items-center gap-2">
+        <button class="w-10 h-10 rounded-full bg-[#343A40] text-white font-semibold text-[15px] flex items-center justify-center shadow-md">
+          <span id="userAvatar">C</span>
+        </button>
+        <button id="menuToggle" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="menu" class="w-5 h-5 text-[#343A40]"></i>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ════════ DRAWER ════════ -->
+  <div id="drawerBackdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40"></div>
+
+  <aside id="mobileDrawer"
+         class="fixed right-0 top-0 bottom-0 w-[280px] bg-white z-50 flex flex-col shadow-2xl"
+         style="transform: translateX(100%);">
+    <div class="px-5 pt-5 pb-4 flex items-center justify-between border-b border-gray-100">
+      <span class="text-[15px] font-bold text-[#1a1d21]">Menu</span>
+      <button id="drawerClose" class="p-1.5 hover:bg-gray-100 rounded-lg">
+        <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+      </button>
+    </div>
+    <nav class="flex-1 px-3 py-3 overflow-y-auto">
+      <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="home" class="w-[18px] h-[18px]"></i> Dashboard
+      </a>
+      <a href="report-garbage.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="trash-2" class="w-[18px] h-[18px]"></i> Report Garbage
+      </a>
+      <a href="report-potholes.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="construction" class="w-[18px] h-[18px]"></i> Report Pothole
+      </a>
+      <a href="report-others.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="layout-grid" class="w-[18px] h-[18px]"></i> Report Others
+      </a>
+      <a href="complaints.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium bg-[#E21B2D] text-white shadow-md">
+        <i data-lucide="file-text" class="w-[18px] h-[18px]"></i> My Complaints
+      </a>
+      <a href="track-status.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="map-pin" class="w-[18px] h-[18px]"></i> Track Status
+      </a>
+      <a href="profile.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="user" class="w-[18px] h-[18px]"></i> Profile
+      </a>
+      <a href="help.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="headphones" class="w-[18px] h-[18px]"></i> Help &amp; Support
+      </a>
+      <button data-logout class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#E21B2D] hover:bg-red-50 mt-2">
+        <i data-lucide="log-out" class="w-[18px] h-[18px]"></i> Logout
+      </button>
+    </nav>
+  </aside>
+
+  <!-- ════════ MAIN ════════ -->
+  <main class="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-5">
+
+    <!-- Back -->
+    <button id="backBtn" class="fade-up d-1 flex items-center gap-2 bg-white hover:bg-gray-50 text-[#343A40] hover:text-[#E21B2D] text-[13px] font-medium px-4 py-2.5 rounded-full shadow-sm hover:shadow-md transition-all">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      <span>Back to Dashboard</span>
+    </button>
+
+    <!-- HERO -->
+    <section class="fade-up d-2 relative rounded-2xl overflow-hidden shadow-[0_15px_40px_-15px_rgba(226,27,45,0.5)]"
+             style="background: linear-gradient(135deg, #E21B2D 0%, #c41525 50%, #a8121f 100%);">
+      <div class="absolute inset-0 opacity-25 bg-cover bg-center mix-blend-overlay"
+           style="background-image: url('../assets/images/garbage-hero.jpg'), url('../assets/images/login-bg.jpg');"></div>
+      <div class="relative z-10 px-6 sm:px-8 py-7 sm:py-9 flex items-center gap-5">
+        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-lg">
+          <i data-lucide="clipboard-list" class="w-8 h-8 sm:w-10 sm:h-10 text-[#E21B2D]"></i>
+        </div>
+        <div class="min-w-0">
+          <h1 class="text-[26px] sm:text-[34px] font-bold text-white leading-tight">My Complaints</h1>
+          <p class="text-[13px] sm:text-[15px] text-white/90 mt-1 leading-snug">
+            Track and manage all the issues you have reported.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section class="fade-up d-3 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+
+      <div class="bg-white rounded-2xl p-4 shadow-sm flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-[#ffe5e8] flex items-center justify-center flex-shrink-0">
+          <i data-lucide="clipboard-list" class="w-6 h-6 text-[#E21B2D]"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="text-[11.5px] text-[#6b7280] font-medium">Total Complaints</div>
+          <div id="statTotal" class="text-[22px] font-bold text-[#1a1d21] leading-none mt-0.5">0</div>
+          <div class="text-[10.5px] text-[#9ca3af] mt-0.5">All complaints</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 shadow-sm flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-[#ffe5e8] flex items-center justify-center flex-shrink-0">
+          <i data-lucide="trash-2" class="w-6 h-6 text-[#E21B2D]"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="text-[11.5px] text-[#6b7280] font-medium">Garbage</div>
+          <div id="statGarbage" class="text-[22px] font-bold text-[#1a1d21] leading-none mt-0.5">0</div>
+          <div id="statGarbagePct" class="text-[10.5px] text-[#9ca3af] mt-0.5">0% of total</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 shadow-sm flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center flex-shrink-0">
+          <i data-lucide="construction" class="w-6 h-6 text-[#343A40]"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="text-[11.5px] text-[#6b7280] font-medium">Potholes</div>
+          <div id="statPothole" class="text-[22px] font-bold text-[#1a1d21] leading-none mt-0.5">0</div>
+          <div id="statPotholePct" class="text-[10.5px] text-[#9ca3af] mt-0.5">0% of total</div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-4 shadow-sm flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-[#fff0f2] flex items-center justify-center flex-shrink-0">
+          <i data-lucide="layout-grid" class="w-6 h-6 text-[#E21B2D]"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="text-[11.5px] text-[#6b7280] font-medium">Others</div>
+          <div id="statOthers" class="text-[22px] font-bold text-[#1a1d21] leading-none mt-0.5">0</div>
+          <div id="statOthersPct" class="text-[10.5px] text-[#9ca3af] mt-0.5">0% of total</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- FILTER TABS -->
+    <section class="fade-up d-3 bg-white rounded-2xl shadow-sm p-1.5 overflow-x-auto">
+      <div class="flex items-center gap-1 min-w-max">
+
+        <button data-filter="all"
+                class="tab-btn active flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-[13px] font-semibold">
+          <i data-lucide="list" class="w-4 h-4"></i>
+          All Complaints (<span id="tabAllCount">0</span>)
+        </button>
+
+        <button data-filter="garbage"
+                class="tab-btn flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-[13px] font-semibold text-[#4a5057] hover:bg-gray-50">
+          <i data-lucide="trash-2" class="w-4 h-4"></i>
+          Garbage (<span id="tabGarbageCount">0</span>)
+        </button>
+
+        <button data-filter="pothole"
+                class="tab-btn flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-[13px] font-semibold text-[#4a5057] hover:bg-gray-50">
+          <i data-lucide="construction" class="w-4 h-4"></i>
+          Potholes (<span id="tabPotholeCount">0</span>)
+        </button>
+
+        <button data-filter="others"
+                class="tab-btn flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl text-[13px] font-semibold text-[#4a5057] hover:bg-gray-50">
+          <i data-lucide="layout-grid" class="w-4 h-4"></i>
+          Others (<span id="tabOthersCount">0</span>)
+        </button>
+
+      </div>
+    </section>
+
+    <!-- LIST -->
+    <section class="fade-up d-3 space-y-3">
+      <div id="complaintsList" class="space-y-3"></div>
+
+      <!-- Empty state -->
+      <div id="emptyState" class="hidden bg-white rounded-2xl shadow-sm p-10 text-center">
+        <div class="w-16 h-16 mx-auto rounded-full bg-[#ffe5e8] flex items-center justify-center mb-3">
+          <i data-lucide="inbox" class="w-7 h-7 text-[#E21B2D]"></i>
+        </div>
+        <p class="text-[15px] font-semibold text-[#343A40]">No complaints yet</p>
+        <p class="text-[12.5px] text-[#6b7280] mt-1 mb-4">Start by reporting an issue in your area.</p>
+        <a href="report-garbage.html" class="inline-flex items-center gap-2 bg-[#E21B2D] hover:bg-[#c41525] text-white text-[13px] font-semibold px-5 py-2.5 rounded-full shadow-md transition-all">
+          <i data-lucide="plus" class="w-4 h-4"></i>
+          Make your first report
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ════════ COMPLAINT DETAIL MODAL ════════ -->
+  <div id="complaintModal" class="hidden fixed inset-0 z-[100] items-center justify-center p-4">
+    <div id="modalBackdrop" class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+
+    <div class="relative bg-white rounded-3xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto fade-up">
+
+      <!-- Close -->
+      <button id="modalClose"
+              class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white hover:bg-gray-100 flex items-center justify-center shadow-md transition-colors z-10">
+        <i data-lucide="x" class="w-4.5 h-4.5 text-[#343A40]"></i>
+      </button>
+
+      <!-- Image -->
+      <div class="relative w-full h-44 sm:h-52 bg-gray-100 overflow-hidden rounded-t-3xl">
+        <img id="modalImage" alt="" class="w-full h-full object-cover" />
+      </div>
+
+      <div class="p-5 sm:p-6">
+
+        <!-- Complaint ID Card -->
+        <div class="bg-gradient-to-br from-[#E21B2D] to-[#a8121f] rounded-2xl p-4 text-white shadow-lg">
+          <div class="text-[11px] uppercase tracking-widest font-semibold text-white/80">Complaint ID</div>
+          <div class="flex items-center justify-between gap-3 mt-1">
+            <span id="modalComplaintId" class="text-[20px] font-bold tracking-wide">SC-2026-0001</span>
+            <div class="flex items-center gap-2">
+              <button id="copyIdBtn"
+                      class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur flex items-center justify-center transition-colors"
+                      title="Copy ID">
+                <i data-lucide="copy" class="w-4 h-4"></i>
+              </button>
+              <button id="shareIdBtn"
+                      class="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur flex items-center justify-center transition-colors"
+                      title="Share">
+                <i data-lucide="share-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status + category -->
+        <div class="flex items-center gap-2 mt-4">
+          <span id="modalCategory" class="px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold">—</span>
+          <span id="modalStatus" class="px-2.5 py-0.5 rounded-full text-[10.5px] font-semibold">—</span>
+        </div>
+
+        <!-- Title -->
+        <h3 id="modalTitle" class="text-[17px] font-bold text-[#1a1d21] mt-3 leading-snug">—</h3>
+
+        <!-- Meta grid -->
+        <div class="mt-4 space-y-2.5 text-[12.5px]">
+          <div class="flex items-start gap-2.5">
+            <i data-lucide="calendar" class="w-4 h-4 text-[#9ca3af] mt-0.5 flex-shrink-0"></i>
+            <span id="modalDate" class="text-[#4a5057]">—</span>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <i data-lucide="map-pin" class="w-4 h-4 text-[#9ca3af] mt-0.5 flex-shrink-0"></i>
+            <span class="text-[#4a5057]">
+              <span id="modalLocality">—</span> — <span id="modalPincode" class="font-mono">—</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="mt-4">
+          <div class="text-[11px] uppercase tracking-wide font-semibold text-[#9ca3af] mb-1">Description</div>
+          <p id="modalDescription" class="text-[13px] text-[#4a5057] leading-relaxed">—</p>
+        </div>
+
+        <!-- Actions -->
+        <button id="trackFullBtn"
+                class="mt-5 w-full flex items-center justify-center gap-2 bg-[#E21B2D] hover:bg-[#c41525] text-white font-semibold text-[14px] py-3.5 rounded-xl shadow-md transition-all">
+          <i data-lucide="route" class="w-4.5 h-4.5"></i>
+          <span>Track Full Status</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/guard.js"></script>
+  <script src="../js/complaints.js"></script>
+  <script>lucide.createIcons();</script>
+
+</body>
+</html>

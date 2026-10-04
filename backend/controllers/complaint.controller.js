@@ -5,9 +5,7 @@ const { success, error } = require('../utils/response.util');
 const create = async (req, res, next) => {
   try {
     const ip = req.ip || req.connection.remoteAddress;
-    const complaint = await complaintService.createComplaint(
-      req.user.id, req.body, req.file, ip
-    );
+    const complaint = await complaintService.createComplaint(req.user.id, req.body, req.file, ip);
     return success(res, complaint, 'Complaint submitted successfully', 201);
   } catch (err) {
     if (err.status) return error(res, err.message, err.status);
@@ -17,10 +15,7 @@ const create = async (req, res, next) => {
 
 const getMy = async (req, res, next) => {
   try {
-    const filters = {
-      category: req.query.category,
-      status: req.query.status
-    };
+    const filters = { category: req.query.category, status: req.query.status };
     const complaints = await complaintService.getMyComplaints(req.user.id, filters);
     return success(res, complaints, 'Complaints fetched');
   } catch (err) {
@@ -53,6 +48,21 @@ const getHistory = async (req, res, next) => {
   }
 };
 
+// ═══ NEW: Track by complaint_id (SC-XXXX-XXXX format) ═══
+const trackByComplaintId = async (req, res, next) => {
+  try {
+    const { complaintId } = req.params;
+    if (!complaintId) return error(res, 'Complaint ID is required', 400);
+    const result = await complaintService.trackByComplaintId(
+      complaintId, req.user.id, req.user.role
+    );
+    return success(res, result, 'Complaint found');
+  } catch (err) {
+    if (err.status) return error(res, err.message, err.status);
+    next(err);
+  }
+};
+
 const getStats = async (req, res, next) => {
   try {
     const stats = await complaintService.getMyStats(req.user.id);
@@ -63,4 +73,4 @@ const getStats = async (req, res, next) => {
   }
 };
 
-module.exports = { create, getMy, getOne, getHistory, getStats };
+module.exports = { create, getMy, getOne, getHistory, trackByComplaintId, getStats };

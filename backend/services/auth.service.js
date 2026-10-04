@@ -132,4 +132,56 @@ const getMe = async (id, role) => {
   return user;
 };
 
-module.exports = { registerCitizen, login, getMe };
+// ============ UPDATE PROFILE ============
+const updateProfile = async (userId, data) => {
+  const { first_name, last_name, gender, mobile, locality, pincode } = data;
+
+  if (!first_name || !last_name) {
+    throw { status: 400, message: 'First name and last name are required' };
+  }
+  if (first_name.length < 2 || last_name.length < 2) {
+    throw { status: 400, message: 'Names must be at least 2 characters' };
+  }
+  if (mobile && !/^[6-9]\d{9}$/.test(mobile)) {
+    throw { status: 400, message: 'Enter valid 10-digit mobile number' };
+  }
+  if (locality && !LOCALITIES.includes(locality)) {
+    throw { status: 400, message: 'Invalid locality' };
+  }
+  if (pincode && !PINCODES.includes(pincode)) {
+    throw { status: 400, message: 'Invalid pincode' };
+  }
+
+  await userModel.updateProfile(userId, {
+    first_name, last_name, gender: gender || null, mobile: mobile || null,
+    locality: locality || null, pincode: pincode || null
+  });
+
+  return await userModel.findById(userId);
+};
+
+// ============ CHANGE PASSWORD ============
+const changePassword = async (userId, currentPassword, newPassword) => {
+  if (!currentPassword || !newPassword) {
+    throw { status: 400, message: 'Current and new password are required' };
+  }
+  if (newPassword.length < 6) {
+    throw { status: 400, message: 'New password must be at least 6 characters' };
+  }
+  if (currentPassword === newPassword) {
+    throw { status: 400, message: 'New password must be different from current' };
+  }
+
+  const user = await userModel.findByIdWithHash(userId);
+  if (!user) throw { status: 404, message: 'User not found' };
+
+  const isMatch = await comparePassword(currentPassword, user.password_hash);
+  if (!isMatch) throw { status: 401, message: 'Current password is incorrect' };
+
+  const newHash = await hashPassword(newPassword);
+  await userModel.updatePassword(userId, newHash);
+
+  return { success: true };
+};
+
+module.exports = { registerCitizen, login, getMe, updateProfile, changePassword };
