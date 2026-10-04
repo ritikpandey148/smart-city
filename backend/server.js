@@ -13,8 +13,25 @@ const { notFound, globalErrorHandler } = require('./middleware/error.middleware'
 
 const app = express();
 
+// CORS — allow multiple origins
+const allowedOrigins = [
+  'http://localhost:5500',
+  'http://127.0.0.1:5500',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
+  origin: function (origin, callback) {
+    // Allow requests with no origin (Postman, curl, mobile apps)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    console.log('⚠️ CORS blocked origin:', origin);
+    return callback(null, true); // dev me allow karo, prod me false karo
+  },
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));

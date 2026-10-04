@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — SMART CITY</title>
+
+  <link rel="icon" type="image/png" href="../assets/images/smart-city-logo.png" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    body { margin: 0; background: #f0f1f3; }
+
+    /* Sidebar scroll */
+    .sidebar-scroll::-webkit-scrollbar { width: 5px; }
+    .sidebar-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+
+    /* Nav item */
+    .nav-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 18px; border-radius: 12px;
+      font-size: 14px; font-weight: 500;
+      color: #4a5057;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      margin-bottom: 4px;
+    }
+    .nav-item:hover:not(.active) {
+      background: #f5f6f7; color: #E21B2D;
+    }
+    .nav-item.active {
+      background: #E21B2D; color: #fff;
+      box-shadow: 0 8px 20px -6px rgba(226,27,45,0.5);
+    }
+    .nav-item.active .nav-icon { color: #fff; }
+
+    /* Report cards */
+    .report-card {
+      transition: transform 0.3s cubic-bezier(.4,0,.2,1), box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .report-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px -14px rgba(0,0,0,0.25);
+    }
+    .report-card:hover .arrow-circle {
+      transform: scale(1.1) rotate(-8deg);
+    }
+    .arrow-circle {
+      transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* Stats card chart wave */
+    .stat-wave {
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Fade in animation */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.5s ease-out both; }
+    .d-1 { animation-delay: 0.05s; }
+    .d-2 { animation-delay: 0.10s; }
+    .d-3 { animation-delay: 0.15s; }
+    .d-4 { animation-delay: 0.20s; }
+    .d-5 { animation-delay: 0.25s; }
+
+    /* Mobile drawer */
+    #mobileDrawer { transition: transform 0.3s ease-out; }
+
+    ::selection { background: #E21B2D; color: white; }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <!-- ═══════════════ SIDEBAR (Desktop) ═══════════════ -->
+  <aside class="hidden lg:flex fixed left-0 top-0 bottom-0 w-[260px] bg-white border-r border-gray-100 flex-col z-30">
+
+    <!-- Logo -->
+    <div class="px-6 pt-6 pb-5">
+      <a href="dashboard.html">
+        <img src="../assets/images/smart-city-logo.png" alt="SMART CITY" class="w-28 h-auto" style="mix-blend-mode: multiply;" />
+      </a>
+      <p class="text-[11px] text-[#6b7280] mt-1.5 pl-1">Smart Citizen, Smart City</p>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 px-4 overflow-y-auto sidebar-scroll">
+      <a href="dashboard.html" class="nav-item active">
+        <i data-lucide="home" class="nav-icon w-[18px] h-[18px]"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="report-garbage.html" class="nav-item">
+        <i data-lucide="trash-2" class="nav-icon w-[18px] h-[18px]"></i>
+        <span>Report Garbage</span>
+      </a>
+      <a href="report-potholes.html" class="nav-item">
+        <i data-lucide="construction" class="nav-icon w-[18px] h-[18px]"></i>
+        <span>Report Pothole</span>
+      </a>
+      <a href="complaints.html" class="nav-item">
+        <i data-lucide="file-text" class="nav-icon w-[18px] h-[18px]"></i>
+        <span>My Complaints</span>
+      </a>
+      <a href="track-status.html" class="nav-item">
+        <i data-lucide="map-pin" class="nav-icon w-[18px] h-[18px]"></i>
+        <span>Track Status</span>
+      </a>
+      <a href="profile.html" class="nav-item">
+        <i data-lucide="user" class="nav-icon w-[18px] h-[18px]"></i>
+        <span>Profile</span>
+      </a>
+      <a href="help.html" class="nav-item">
+        <i data-lucide="headphones" class="nav-icon w-[18px] h-[18px]"></i>
+        <span>Help &amp; Support</span>
+      </a>
+    </nav>
+
+    <!-- Bottom illustration + tagline -->
+    <div class="relative pt-4">
+      <p class="px-6 text-[11.5px] leading-snug text-[#4a5057] mb-3">
+        Together for a<br>
+        <span class="font-semibold text-[#1a1d21]">Cleaner, Safer &amp;</span><br>
+        <span class="font-bold text-[#E21B2D]">Better Mumbai</span>
+      </p>
+      <img src="../assets/images/sidebar-city.png" alt="" class="w-full h-24 object-cover" />
+    </div>
+  </aside>
+
+  <!-- ═══════════════ MOBILE DRAWER ═══════════════ -->
+  <div id="drawerBackdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"></div>
+
+  <aside id="mobileDrawer"
+         class="fixed left-0 top-0 bottom-0 w-[270px] bg-white z-50 flex flex-col
+                -translate-x-full lg:hidden shadow-2xl">
+
+    <div class="px-6 pt-5 pb-4 flex items-start justify-between">
+      <div>
+        <img src="../assets/images/smart-city-logo.png" alt="SMART CITY" class="w-24 h-auto" style="mix-blend-mode: multiply;" />
+        <p class="text-[10px] text-[#6b7280] mt-1">Smart Citizen, Smart City</p>
+      </div>
+      <button id="drawerClose" class="p-1.5 hover:bg-gray-100 rounded-lg">
+        <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+      </button>
+    </div>
+
+    <div class="px-6 py-3 border-y border-gray-100">
+      <p id="sidebarUserName" class="text-[14px] font-semibold text-[#1a1d21]">User</p>
+      <p id="sidebarUserRole" class="text-[11.5px] text-[#E21B2D] font-medium">Citizen</p>
+    </div>
+
+    <nav class="flex-1 px-4 py-4 overflow-y-auto">
+      <a href="dashboard.html" class="nav-item active"><i data-lucide="home" class="nav-icon w-[18px] h-[18px]"></i><span>Dashboard</span></a>
+      <a href="report-garbage.html" class="nav-item"><i data-lucide="trash-2" class="nav-icon w-[18px] h-[18px]"></i><span>Report Garbage</span></a>
+      <a href="report-potholes.html" class="nav-item"><i data-lucide="construction" class="nav-icon w-[18px] h-[18px]"></i><span>Report Pothole</span></a>
+      <a href="complaints.html" class="nav-item"><i data-lucide="file-text" class="nav-icon w-[18px] h-[18px]"></i><span>My Complaints</span></a>
+      <a href="track-status.html" class="nav-item"><i data-lucide="map-pin" class="nav-icon w-[18px] h-[18px]"></i><span>Track Status</span></a>
+      <a href="profile.html" class="nav-item"><i data-lucide="user" class="nav-icon w-[18px] h-[18px]"></i><span>Profile</span></a>
+      <a href="help.html" class="nav-item"><i data-lucide="headphones" class="nav-icon w-[18px] h-[18px]"></i><span>Help &amp; Support</span></a>
+    </nav>
+
+    <button data-logout class="nav-item mx-4 mb-4 text-[#E21B2D] hover:bg-red-50">
+      <i data-lucide="log-out" class="nav-icon w-[18px] h-[18px]"></i>
+      <span>Logout</span>
+    </button>
+  </aside>
+
+  <!-- ═══════════════ MAIN ═══════════════ -->
+  <main class="lg:ml-[260px] min-h-screen flex flex-col">
+
+    <!-- ─── Header ─── -->
+    <header class="bg-white/70 backdrop-blur-md sticky top-0 z-20 border-b border-gray-100">
+      <div class="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+
+        <!-- Left: Welcome -->
+        <div class="flex items-center gap-3 min-w-0">
+          <button id="menuToggle" class="lg:hidden p-2 hover:bg-gray-100 rounded-lg flex-shrink-0">
+            <i data-lucide="menu" class="w-5 h-5 text-[#343A40]"></i>
+          </button>
+          <div class="min-w-0">
+            <h1 class="text-[16px] sm:text-[19px] font-semibold text-[#1a1d21] leading-tight truncate">
+              Welcome back, <span id="userFirstName">Citizen</span> 👋
+            </h1>
+            <p class="text-[12px] sm:text-[13px] text-[#6b7280] truncate">Let's make our city cleaner and safer today.</p>
+          </div>
+        </div>
+
+        <!-- Right: Pill + Avatar -->
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <!-- Mumbai pill (hidden on mobile) -->
+          <div class="hidden xl:flex items-center gap-3 bg-white border border-gray-100 rounded-full px-4 py-2 shadow-sm">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#E21B2D"/>
+              <circle cx="12" cy="9" r="2.5" fill="#fff"/>
+            </svg>
+            <span class="text-[13px] font-bold text-[#1a1d21]">Mumbai</span>
+            <span class="w-px h-4 bg-gray-300"></span>
+            <span class="text-[12.5px] text-[#4a5057]">Cleaner City</span>
+            <span class="w-px h-4 bg-gray-300"></span>
+            <span class="text-[12.5px] text-[#4a5057]">Safer Roads</span>
+            <span class="w-px h-4 bg-gray-300"></span>
+            <span class="text-[12.5px] text-[#4a5057]">Better Tomorrow</span>
+          </div>
+
+          <!-- Avatar -->
+          <div class="relative group">
+            <button class="w-10 h-10 rounded-full bg-[#343A40] text-white font-semibold text-[15px] flex items-center justify-center shadow-md hover:ring-4 ring-[#E21B2D]/15 transition-all">
+              <span id="userAvatar">R</span>
+            </button>
+          </div>
+
+          <!-- Hamburger (only mobile) -->
+          <button id="menuToggleMobile" class="lg:hidden p-2 hover:bg-gray-100 rounded-lg" onclick="document.getElementById('menuToggle').click()">
+            <i data-lucide="menu" class="w-5 h-5 text-[#343A40]"></i>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- ─── Content ─── -->
+    <div class="flex-1 px-4 sm:px-6 lg:px-8 py-5 sm:py-6 space-y-5 sm:space-y-6">
+
+      <!-- ══ HERO BANNER ══ -->
+      <section class="fade-up d-1 rounded-2xl overflow-hidden shadow-[0_15px_40px_-15px_rgba(0,0,0,0.2)] bg-[#f5f6f7]">
+        <img src="../assets/images/dashboard-hero.jpg" alt="SMART CITY" class="w-full h-auto block" />
+      </section>
+
+      <!-- ══ MAKE A REPORT ══ -->
+      <section class="fade-up d-2">
+        <div class="flex items-baseline justify-between mb-3">
+          <h2 class="text-[20px] sm:text-[22px] font-bold text-[#1a1d21]">Make a Report</h2>
+          <span class="text-[12.5px] text-[#6b7280] hidden sm:inline">Help us keep Mumbai clean, safe and better for everyone.</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+          <!-- Report Garbage -->
+          <a href="report-garbage.html" class="report-card rounded-2xl bg-[#E21B2D] text-white p-5 flex items-center gap-4">
+            <div class="w-14 h-14 bg-white/15 rounded-2xl flex items-center justify-center flex-shrink-0 backdrop-blur-sm">
+              <i data-lucide="trash-2" class="w-7 h-7 text-white"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-[17px]">Report Garbage</h3>
+              <p class="text-[12.5px] text-white/85 mt-0.5 leading-snug">Overflowing bins, uncollected waste or illegal dumping.</p>
+            </div>
+            <div class="arrow-circle w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+              <i data-lucide="chevron-right" class="w-5 h-5 text-[#E21B2D]"></i>
+            </div>
+          </a>
+
+          <!-- Report Pothole -->
+          <a href="report-potholes.html" class="report-card rounded-2xl bg-[#343A40] text-white p-5 flex items-center gap-4">
+            <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <i data-lucide="construction" class="w-7 h-7 text-white"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-[17px]">Report Pothole</h3>
+              <p class="text-[12.5px] text-white/80 mt-0.5 leading-snug">Potholes, damaged roads or unsafe conditions.</p>
+            </div>
+            <div class="arrow-circle w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0">
+              <i data-lucide="chevron-right" class="w-5 h-5 text-[#343A40]"></i>
+            </div>
+          </a>
+
+          <!-- Report Others -->
+          <a href="report-others.html" class="report-card rounded-2xl bg-[#fde8ea] text-[#1a1d21] p-5 flex items-center gap-4">
+            <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm">
+              <i data-lucide="layout-grid" class="w-7 h-7 text-[#E21B2D]"></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-[17px] text-[#E21B2D]">Report Others</h3>
+              <p class="text-[12.5px] text-[#6b7280] mt-0.5 leading-snug">Street lights, water logging, stray animals, etc.</p>
+            </div>
+            <div class="arrow-circle w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+              <i data-lucide="chevron-right" class="w-5 h-5 text-[#E21B2D]"></i>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- ══ STATS ══ -->
+      <section class="fade-up d-3 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+
+        <!-- Total -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-[#ffe5e8] flex items-center justify-center flex-shrink-0">
+              <i data-lucide="file-text" class="w-5 h-5 text-[#E21B2D]"></i>
+            </div>
+            <div>
+              <div id="statTotal" class="text-[22px] sm:text-[26px] font-bold text-[#1a1d21] leading-none">0</div>
+              <div class="text-[11.5px] text-[#6b7280] mt-1">Total Complaints</div>
+            </div>
+          </div>
+          <svg viewBox="0 0 200 40" class="w-full h-6 mt-2" preserveAspectRatio="none">
+            <polyline class="stat-wave" fill="none" stroke="#E21B2D" stroke-width="2"
+              points="0,30 20,25 40,32 60,20 80,28 100,15 120,22 140,10 160,18 180,8 200,15"/>
+          </svg>
+        </div>
+
+        <!-- Garbage -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="trash-2" class="w-5 h-5 text-[#343A40]"></i>
+            </div>
+            <div>
+              <div id="statGarbage" class="text-[22px] sm:text-[26px] font-bold text-[#1a1d21] leading-none">0</div>
+              <div class="text-[11.5px] text-[#6b7280] mt-1">Garbage Complaints</div>
+            </div>
+          </div>
+          <svg viewBox="0 0 200 40" class="w-full h-6 mt-2" preserveAspectRatio="none">
+            <polyline class="stat-wave" fill="none" stroke="#9ca3af" stroke-width="2"
+              points="0,28 20,22 40,30 60,18 80,26 100,14 120,24 140,12 160,20 180,10 200,18"/>
+          </svg>
+        </div>
+
+        <!-- Pothole -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-[#ffe5e8] flex items-center justify-center flex-shrink-0">
+              <i data-lucide="construction" class="w-5 h-5 text-[#E21B2D]"></i>
+            </div>
+            <div>
+              <div id="statPothole" class="text-[22px] sm:text-[26px] font-bold text-[#1a1d21] leading-none">0</div>
+              <div class="text-[11.5px] text-[#6b7280] mt-1">Pothole Complaints</div>
+            </div>
+          </div>
+          <svg viewBox="0 0 200 40" class="w-full h-6 mt-2" preserveAspectRatio="none">
+            <polyline class="stat-wave" fill="none" stroke="#E21B2D" stroke-width="2"
+              points="0,32 20,28 40,20 60,26 80,15 100,22 120,12 140,18 160,8 180,14 200,10"/>
+          </svg>
+        </div>
+
+        <!-- Others -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="layout-grid" class="w-5 h-5 text-[#343A40]"></i>
+            </div>
+            <div>
+              <div id="statOthers" class="text-[22px] sm:text-[26px] font-bold text-[#1a1d21] leading-none">0</div>
+              <div class="text-[11.5px] text-[#6b7280] mt-1">Other Complaints</div>
+            </div>
+          </div>
+          <svg viewBox="0 0 200 40" class="w-full h-6 mt-2" preserveAspectRatio="none">
+            <polyline class="stat-wave" fill="none" stroke="#9ca3af" stroke-width="2"
+              points="0,30 20,24 40,28 60,20 80,26 100,16 120,22 140,14 160,20 180,12 200,16"/>
+          </svg>
+        </div>
+
+      </section>
+
+      <!-- ══ RECENT COMPLAINTS ══ -->
+      <section class="fade-up d-4 bg-white rounded-2xl shadow-sm p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-[17px] sm:text-[19px] font-bold text-[#1a1d21]">Recent Complaints</h2>
+          <a href="complaints.html" class="text-[13px] text-[#E21B2D] font-semibold hover:underline flex items-center gap-1">
+            View All <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+          </a>
+        </div>
+
+        <div id="recentComplaintsList" class="divide-y divide-gray-50"></div>
+
+        <!-- Empty state -->
+        <div id="recentComplaintsEmpty" class="hidden flex flex-col items-center justify-center py-10 text-center">
+          <div class="w-16 h-16 rounded-full bg-[#ffe5e8] flex items-center justify-center mb-3">
+            <i data-lucide="inbox" class="w-7 h-7 text-[#E21B2D]"></i>
+          </div>
+          <p class="text-[14px] font-semibold text-[#343A40]">No complaints yet</p>
+          <p class="text-[12.5px] text-[#6b7280] mt-1 mb-4">Start by reporting an issue in your area.</p>
+          <a href="report-garbage.html" class="inline-flex items-center gap-2 bg-[#E21B2D] hover:bg-[#c41525] text-white text-[13px] font-semibold px-5 py-2.5 rounded-full shadow-md transition-all">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+            Make your first report
+          </a>
+        </div>
+      </section>
+
+      <!-- ══ ABOUT SMART CITY ══ -->
+      <section class="fade-up d-5 bg-white rounded-2xl shadow-sm p-5 sm:p-6">
+        <div class="flex flex-col lg:flex-row gap-6 items-start">
+
+          <!-- Left: title + description -->
+          <div class="lg:w-1/2 flex gap-3">
+            <div class="w-1 bg-[#E21B2D] rounded-full flex-shrink-0"></div>
+            <div>
+              <h2 class="text-[17px] sm:text-[19px] font-bold text-[#1a1d21] mb-2">About Smart City</h2>
+              <p class="text-[13px] text-[#6b7280] leading-relaxed">
+                Smart City is a citizen-powered platform to report and track civic issues like garbage, potholes, street lights and more.
+                Your reports help authorities take quick action and make Mumbai cleaner, safer and better for everyone.
+              </p>
+            </div>
+          </div>
+
+          <!-- Right: 3 feature blocks -->
+          <div class="lg:w-1/2 grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
+
+            <div class="flex flex-col gap-2">
+              <div class="w-9 h-9 rounded-full bg-[#ffe5e8] flex items-center justify-center">
+                <i data-lucide="users" class="w-4.5 h-4.5 text-[#E21B2D]"></i>
+              </div>
+              <h4 class="font-bold text-[13px] text-[#1a1d21]">Empowered Citizens</h4>
+              <p class="text-[11.5px] text-[#6b7280] leading-snug">Your voice matters</p>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <div class="w-9 h-9 rounded-full bg-[#ffe5e8] flex items-center justify-center">
+                <i data-lucide="shield-check" class="w-4.5 h-4.5 text-[#E21B2D]"></i>
+              </div>
+              <h4 class="font-bold text-[13px] text-[#1a1d21]">Cleaner &amp; Safer City</h4>
+              <p class="text-[11.5px] text-[#6b7280] leading-snug">Together we can</p>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <div class="w-9 h-9 rounded-full bg-[#ffe5e8] flex items-center justify-center">
+                <i data-lucide="leaf" class="w-4.5 h-4.5 text-[#E21B2D]"></i>
+              </div>
+              <h4 class="font-bold text-[13px] text-[#1a1d21]">Better Tomorrow</h4>
+              <p class="text-[11.5px] text-[#6b7280] leading-snug">A greener, healthier Mumbai</p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/guard.js"></script>
+  <script src="../js/citizen-dashboard.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+
+</body>
+</html>
