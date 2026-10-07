@@ -117,6 +117,11 @@
       <a href="track-status.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
         <i data-lucide="map-pin" class="w-[18px] h-[18px]"></i> Track Status
       </a>
+      <a href="notifications.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="bell" class="w-[18px] h-[18px]"></i> Notifications
+        <span id="drawerNotifBadge" class="hidden min-w-[20px] h-[20px] px-1.5 rounded-full bg-[#E21B2D] text-white text-[10px] font-bold flex items-center justify-center">
+          <span id="drawerNotifCount">0</span>
+        </span>
       <a href="profile.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
         <i data-lucide="user" class="w-[18px] h-[18px]"></i> Profile
       </a>
@@ -340,6 +345,7 @@
   <script src="../js/api.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/guard.js"></script>
+  <script src="../js/side-menu.js"></script>
   <script src="../js/help.js"></script>
   <script>lucide.createIcons();</script>
 

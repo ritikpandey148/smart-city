@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Report — SMART CITY</title>
+
+  <link rel="icon" type="image/png" href="../assets/images/smart-city-logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    body { margin: 0; background: #f0f1f3; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.4s ease-out both; }
+    .d-1 { animation-delay: 0.05s; }
+    .d-2 { animation-delay: 0.10s; }
+    .d-3 { animation-delay: 0.15s; }
+
+    #mobileDrawer { transition: transform 0.3s ease-out; }
+
+    ::selection { background: #E21B2D; color: white; }
+    input::-webkit-credentials-auto-fill-button { display: none !important; }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-30 bg-white/85 backdrop-blur-md border-b border-gray-100">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+      <a href="dashboard.html" class="flex items-center gap-2.5 flex-shrink-0">
+        <img src="../assets/images/smart-city-logo.png" alt="SMART CITY" class="w-11 h-11 object-contain" style="mix-blend-mode: multiply;" />
+        <div class="hidden sm:block">
+          <div class="text-[15px] font-bold leading-tight">
+            <span class="text-[#343A40]">SMART</span> <span class="text-[#E21B2D]">CITY</span>
+          </div>
+          <div class="text-[10.5px] text-[#6b7280] leading-tight">Smart Citizen, Smart City</div>
+        </div>
+      </a>
+      <div class="flex items-center gap-2">
+        <button class="w-10 h-10 rounded-full bg-[#343A40] text-white font-semibold text-[15px] flex items-center justify-center shadow-md">
+          <span id="userAvatar">C</span>
+        </button>
+        <button id="menuToggle" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="menu" class="w-5 h-5 text-[#343A40]"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- DRAWER -->
+  <div id="drawerBackdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40"></div>
+  <aside id="mobileDrawer"
+         class="fixed right-0 top-0 bottom-0 w-[280px] bg-white z-50 flex flex-col shadow-2xl"
+         style="transform: translateX(100%);">
+    <div class="px-5 pt-5 pb-4 flex items-center justify-between border-b border-gray-100">
+      <span class="text-[15px] font-bold text-[#1a1d21]">Menu</span>
+      <button id="drawerClose" class="p-1.5 hover:bg-gray-100 rounded-lg">
+        <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+      </button>
+    </div>
+    <nav class="flex-1 px-3 py-3 overflow-y-auto">
+      <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="home" class="w-[18px] h-[18px]"></i> Dashboard
+      </a>
+      <a href="report-garbage.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="trash-2" class="w-[18px] h-[18px]"></i> Report Garbage
+      </a>
+      <a href="report-potholes.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="construction" class="w-[18px] h-[18px]"></i> Report Pothole
+      </a>
+      <a href="report-others.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="layout-grid" class="w-[18px] h-[18px]"></i> Report Others
+      </a>
+      <a href="complaints.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="file-text" class="w-[18px] h-[18px]"></i> My Complaints
+      </a>
+      <a href="track-status.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="map-pin" class="w-[18px] h-[18px]"></i> Track Status
+      </a>
+      <a href="notifications.html" class="flex items-center justify-between px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <span class="flex items-center gap-3"><i data-lucide="bell" class="w-[18px] h-[18px]"></i> Notifications</span>
+      </a>
+      <a href="profile.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="user" class="w-[18px] h-[18px]"></i> Profile
+      </a>
+      <a href="help.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="headphones" class="w-[18px] h-[18px]"></i> Help &amp; Support
+      </a>
+      <button data-logout class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#E21B2D] hover:bg-red-50 mt-2">
+        <i data-lucide="log-out" class="w-[18px] h-[18px]"></i> Logout
+      </button>
+    </nav>
+  </aside>
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-5">
+
+    <button id="backBtn" class="fade-up d-1 flex items-center gap-2 bg-white hover:bg-gray-50 text-[#343A40] hover:text-[#E21B2D] text-[13px] font-medium px-4 py-2.5 rounded-full shadow-sm hover:shadow-md transition-all">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      <span>Back to Dashboard</span>
+    </button>
+
+    <!-- HERO -->
+    <section class="fade-up d-2 relative rounded-2xl overflow-hidden bg-[#fde8ea] shadow-[0_15px_40px_-15px_rgba(226,27,45,0.4)]">
+      <div class="absolute inset-0">
+        <img src="../assets/images/help-hero.jpg" alt="" class="w-full h-full object-cover opacity-70" onerror="this.style.display='none'" />
+      </div>
+      <div class="relative z-10 px-6 sm:px-10 py-8 sm:py-10 max-w-2xl">
+        <div class="inline-flex items-center gap-2 mb-2">
+          <span class="w-6 h-0.5 bg-[#E21B2D]"></span>
+          <span class="text-[11.5px] font-bold text-[#E21B2D] tracking-wider">HELP &amp; SUPPORT</span>
+        </div>
+        <h1 class="text-[30px] sm:text-[44px] font-bold leading-tight">
+          <span class="text-[#343A40]">How to </span><span class="text-[#E21B2D]">Report</span>
+        </h1>
+        <p class="text-[13px] sm:text-[15px] text-[#4a5057] mt-2 leading-snug max-w-lg">
+          Follow these simple steps to report a garbage issue and help keep our city clean, healthy and safe for everyone.
+        </p>
+      </div>
+    </section>
+
+    <!-- TABS -->
+    <section class="fade-up d-2 bg-[#f5f6f7] rounded-2xl p-1.5 flex gap-1.5 shadow-sm">
+      <button data-tab="garbage"
+              class="flex-1 flex items-center justify-center gap-2.5 py-3 sm:py-3.5 rounded-xl text-[13.5px] sm:text-[14.5px] font-semibold bg-[#E21B2D] text-white shadow-md transition-all">
+        <i data-lucide="trash-2" class="w-4.5 h-4.5"></i>
+        <span>Report Garbage</span>
+      </button>
+      <button data-tab="pothole"
+              class="flex-1 flex items-center justify-center gap-2.5 py-3 sm:py-3.5 rounded-xl text-[13.5px] sm:text-[14.5px] font-semibold bg-[#f0f1f3] text-[#343A40] transition-all">
+        <i data-lucide="construction" class="w-4.5 h-4.5"></i>
+        <span>Report Pothole</span>
+      </button>
+    </section>
+
+    <!-- WHAT IS A ... ISSUE? -->
+    <section class="fade-up d-2 bg-[#fde8ea] rounded-2xl p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6 items-center">
+
+      <!-- Left: Icon + text -->
+      <div class="lg:col-span-2 flex items-start gap-4">
+        <div class="w-14 h-14 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+          <i data-lucide="trash-2" class="w-7 h-7 text-[#E21B2D]"></i>
+        </div>
+        <div>
+          <h2 id="whatTitle" class="text-[17px] sm:text-[19px] font-bold text-[#1a1d21]">What is a Garbage Issue?</h2>
+          <p id="whatDesc" class="text-[12.5px] sm:text-[13px] text-[#4a5057] mt-1.5 leading-relaxed">
+            A garbage issue includes overflowing dustbins, uncollected waste, scattered garbage on roads, illegal dumping or any other waste-related problem in public places.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right: Your report helps us -->
+      <div class="bg-white rounded-xl p-4 shadow-sm">
+        <div class="flex items-center gap-2 mb-2.5">
+          <i data-lucide="megaphone" class="w-4 h-4 text-[#E21B2D]"></i>
+          <span class="text-[13px] font-bold text-[#1a1d21]">Your report helps us</span>
+        </div>
+        <ul class="space-y-1.5">
+          <li class="flex items-start gap-1.5">
+            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-[#E21B2D] flex-shrink-0 mt-0.5" fill="#E21B2D"></i>
+            <span class="text-[11.5px] text-[#4a5057]">Keep our city clean and healthy</span>
+          </li>
+          <li class="flex items-start gap-1.5">
+            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-[#E21B2D] flex-shrink-0 mt-0.5" fill="#E21B2D"></i>
+            <span class="text-[11.5px] text-[#4a5057]">Reduce pollution and disease</span>
+          </li>
+          <li class="flex items-start gap-1.5">
+            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-[#E21B2D] flex-shrink-0 mt-0.5" fill="#E21B2D"></i>
+            <span class="text-[11.5px] text-[#4a5057]">Make public places safer and better</span>
+          </li>
+        </ul>
+      </div>
+
+    </section>
+
+    <!-- STEP BY STEP GUIDE -->
+    <section class="fade-up d-3 bg-white rounded-2xl p-5 sm:p-6 shadow-sm">
+
+      <div class="flex items-center gap-2.5 mb-1.5">
+        <div class="w-9 h-9 rounded-lg bg-[#ffe5e8] flex items-center justify-center">
+          <i data-lucide="list-ordered" class="w-4 h-4 text-[#E21B2D]"></i>
+        </div>
+        <h2 class="text-[18px] sm:text-[20px] font-bold text-[#1a1d21]">Step-by-Step Guide</h2>
+      </div>
+      <p class="text-[12.5px] text-[#6b7280] mb-5 ml-11">Follow the steps below to easily submit your garbage complaint.</p>
+
+      <!-- Steps grid -->
+      <div id="stepsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 lg:gap-3"></div>
+
+    </section>
+
+    <!-- TIPS + HELP -->
+    <section class="fade-up d-3 grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+      <!-- Tips -->
+      <div class="bg-[#e8f2f6] rounded-2xl p-5 sm:p-6">
+        <div class="flex items-center gap-2.5 mb-4">
+          <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm">
+            <i data-lucide="lightbulb" class="w-4 h-4 text-[#E21B2D]"></i>
+          </div>
+          <div>
+            <h3 class="text-[15px] font-bold text-[#1a1d21]">Tips for a Better Report</h3>
+            <p class="text-[11.5px] text-[#6b7280]">Follow these tips to help us resolve your complaint faster.</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-white rounded-xl p-3 flex items-start gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-[#e8f2f6] flex items-center justify-center flex-shrink-0">
+              <i data-lucide="camera" class="w-4 h-4 text-[#E21B2D]"></i>
+            </div>
+            <p class="text-[11px] text-[#4a5057] leading-snug">Upload a clear and recent photo</p>
+          </div>
+          <div class="bg-white rounded-xl p-3 flex items-start gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-[#e8f2f6] flex items-center justify-center flex-shrink-0">
+              <i data-lucide="file-text" class="w-4 h-4 text-[#E21B2D]"></i>
+            </div>
+            <p class="text-[11px] text-[#4a5057] leading-snug">Write a short and meaningful title</p>
+          </div>
+          <div class="bg-white rounded-xl p-3 flex items-start gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-[#e8f2f6] flex items-center justify-center flex-shrink-0">
+              <i data-lucide="map-pin" class="w-4 h-4 text-[#E21B2D]"></i>
+            </div>
+            <p class="text-[11px] text-[#4a5057] leading-snug">Select the exact location on map</p>
+          </div>
+          <div class="bg-white rounded-xl p-3 flex items-start gap-2.5">
+            <div class="w-8 h-8 rounded-lg bg-[#e8f2f6] flex items-center justify-center flex-shrink-0">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-[#E21B2D]"></i>
+            </div>
+            <p class="text-[11px] text-[#4a5057] leading-snug">Provide correct and detailed description</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Need More Help -->
+      <div class="bg-[#fde8ea] rounded-2xl p-5 sm:p-6">
+        <div class="flex items-center gap-2.5 mb-3">
+          <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center shadow-sm">
+            <i data-lucide="mail" class="w-4 h-4 text-[#E21B2D]"></i>
+          </div>
+          <div>
+            <h3 class="text-[15px] font-bold text-[#1a1d21]">Need More Help?</h3>
+            <p class="text-[11.5px] text-[#6b7280]">Still facing an issue or have a question? Contact our support team.</p>
+          </div>
+        </div>
+        <a href="help.html" class="bg-white rounded-xl p-4 flex items-center gap-3 hover:shadow-md transition-shadow">
+          <div class="w-11 h-11 rounded-lg bg-[#fde8ea] flex items-center justify-center flex-shrink-0">
+            <i data-lucide="mail" class="w-5 h-5 text-[#E21B2D]"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[11px] uppercase tracking-wide font-semibold text-[#6b7280]">Email Us</div>
+            <div class="text-[14px] font-bold text-[#E21B2D] truncate">smartcityhelp26@gmail.com</div>
+            <div class="text-[11px] text-[#6b7280] mt-0.5">We usually respond within 24–48 hours.</div>
+          </div>
+        </a>
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/guard.js"></script>
+  <script src="../js/side-menu.js"></script>
+  <script src="../js/how-to-report.js"></script>
+  <script>lucide.createIcons();</script>
+
+</body>
+</html>

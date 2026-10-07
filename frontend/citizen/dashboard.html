@@ -121,6 +121,15 @@
         <i data-lucide="map-pin" class="nav-icon w-[18px] h-[18px]"></i>
         <span>Track Status</span>
       </a>
+      <a href="notifications.html" class="flex items-center justify-between px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+  <span class="flex items-center gap-3">
+    <i data-lucide="bell" class="w-[18px] h-[18px]"></i> Notifications
+  </span>
+  <span id="sideNotifBadge" class="hidden min-w-[20px] h-[20px] px-1.5 rounded-full bg-[#E21B2D] text-white text-[10px] font-bold flex items-center justify-center">
+    <span id="sideNotifCount">0</span>
+  </span>
+</a>
+
       <a href="profile.html" class="nav-item">
         <i data-lucide="user" class="nav-icon w-[18px] h-[18px]"></i>
         <span>Profile</span>
@@ -170,6 +179,14 @@
       <a href="report-potholes.html" class="nav-item"><i data-lucide="construction" class="nav-icon w-[18px] h-[18px]"></i><span>Report Pothole</span></a>
       <a href="complaints.html" class="nav-item"><i data-lucide="file-text" class="nav-icon w-[18px] h-[18px]"></i><span>My Complaints</span></a>
       <a href="track-status.html" class="nav-item"><i data-lucide="map-pin" class="nav-icon w-[18px] h-[18px]"></i><span>Track Status</span></a>
+      <a href="notifications.html" class="flex items-center justify-between px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+  <span class="flex items-center gap-3">
+    <i data-lucide="bell" class="w-[18px] h-[18px]"></i> Notifications
+  </span>
+  <span id="sideNotifBadge" class="hidden min-w-[20px] h-[20px] px-1.5 rounded-full bg-[#E21B2D] text-white text-[10px] font-bold flex items-center justify-center">
+    <span id="sideNotifCount">0</span>
+   </span>
+       </a>
       <a href="profile.html" class="nav-item"><i data-lucide="user" class="nav-icon w-[18px] h-[18px]"></i><span>Profile</span></a>
       <a href="help.html" class="nav-item"><i data-lucide="headphones" class="nav-icon w-[18px] h-[18px]"></i><span>Help &amp; Support</span></a>
     </nav>
@@ -449,6 +466,7 @@
   <script src="../js/api.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/guard.js"></script>
+  <script src="../js/side-menu.js"></script>
   <script src="../js/citizen-dashboard.js"></script>
   <script>
     lucide.createIcons();

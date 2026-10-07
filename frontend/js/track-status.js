@@ -13,6 +13,8 @@ const TrackPage = {
     if (!this.user) return;
 
     Guard.startHeartbeat();
+      // Initialize side menu (avatar-triggered)
+  SideMenu.init(this.user);
     this.renderUser();
     this.initMenu();
     this.initLogout();

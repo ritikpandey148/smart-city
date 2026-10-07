@@ -1,31 +1,33 @@
 // backend/services/notification.service.js
 const notificationModel = require('../models/notification.model');
 
-// Get notifications for logged-in user (citizen or provider)
 const getMyNotifications = async (userId, role) => {
   return await notificationModel.getForUser(userId, role);
 };
 
-// Mark notification read
-const markAsRead = async (notificationId, userId, role) => {
-  await notificationModel.markAsRead(notificationId);
-  return { id: notificationId, is_read: 1 };
+const getUnreadCount = async (userId, role) => {
+  return await notificationModel.getUnreadCount(userId, role);
 };
 
-// Admin send general notification
+const markAsRead = async (notificationId, userId, role) => {
+  const affected = await notificationModel.markAsRead(notificationId, userId, role);
+  return { id: notificationId, updated: affected };
+};
+
+const markAllAsRead = async (userId, role) => {
+  const affected = await notificationModel.markAllAsRead(userId, role);
+  return { updated: affected };
+};
+
 const sendGeneralNotification = async (adminId, data) => {
   const { title, message, target_type, category } = data;
-
-  if (!title || !message) {
-    throw { status: 400, message: 'Title and message are required' };
-  }
+  if (!title || !message) throw { status: 400, message: 'Title and message are required' };
 
   const validTargets = ['all', 'citizen', 'provider'];
   const target = validTargets.includes(target_type) ? target_type : 'all';
 
   const id = await notificationModel.create({
-    title,
-    message,
+    title, message,
     sender_id: adminId,
     sender_role: 'admin',
     target_type: target,
@@ -37,4 +39,10 @@ const sendGeneralNotification = async (adminId, data) => {
   return { id, title, message, target_type: target };
 };
 
-module.exports = { getMyNotifications, markAsRead, sendGeneralNotification };
+module.exports = {
+  getMyNotifications,
+  getUnreadCount,
+  markAsRead,
+  markAllAsRead,
+  sendGeneralNotification
+};

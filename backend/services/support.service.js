@@ -35,13 +35,25 @@ const createMessage = async (userId, data) => {
   const user = userRows[0] || { first_name: 'User', last_name: '', username: '' };
   const userName = `${user.first_name} ${user.last_name}`.trim() || user.username;
 
-  // Notify ALL providers (broadcast)
+    // Notify ALL providers (broadcast)
   await notificationModel.create({
     title: `New Support Request from ${userName}`,
     message: `Subject: ${subject.trim().substring(0, 100)}`,
     sender_id: userId,
     sender_role: 'system',
     target_type: 'provider',
+    target_user_id: null,
+    complaint_id: null,
+    category: 'support'
+  });
+
+  // Notify Admin as well
+  await notificationModel.create({
+    title: `New Support Request from ${userName}`,
+    message: `Subject: ${subject.trim().substring(0, 100)}`,
+    sender_id: userId,
+    sender_role: 'system',
+    target_type: 'admin',
     target_user_id: null,
     complaint_id: null,
     category: 'support'

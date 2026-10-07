@@ -5,7 +5,18 @@ const { success, error } = require('../utils/response.util');
 const getMy = async (req, res, next) => {
   try {
     const list = await notificationService.getMyNotifications(req.user.id, req.user.role);
-    return success(res, list, 'Notifications fetched');
+    const unread = await notificationService.getUnreadCount(req.user.id, req.user.role);
+    return success(res, { notifications: list, unread_count: unread }, 'Notifications fetched');
+  } catch (err) {
+    if (err.status) return error(res, err.message, err.status);
+    next(err);
+  }
+};
+
+const getUnread = async (req, res, next) => {
+  try {
+    const count = await notificationService.getUnreadCount(req.user.id, req.user.role);
+    return success(res, { unread_count: count }, 'Unread count');
   } catch (err) {
     if (err.status) return error(res, err.message, err.status);
     next(err);
@@ -24,6 +35,16 @@ const markRead = async (req, res, next) => {
   }
 };
 
+const markAllRead = async (req, res, next) => {
+  try {
+    const result = await notificationService.markAllAsRead(req.user.id, req.user.role);
+    return success(res, result, 'All notifications marked as read');
+  } catch (err) {
+    if (err.status) return error(res, err.message, err.status);
+    next(err);
+  }
+};
+
 const sendGeneral = async (req, res, next) => {
   try {
     const result = await notificationService.sendGeneralNotification(req.user.id, req.body);
@@ -34,4 +55,4 @@ const sendGeneral = async (req, res, next) => {
   }
 };
 
-module.exports = { getMy, markRead, sendGeneral };
+module.exports = { getMy, getUnread, markRead, markAllRead, sendGeneral };

@@ -76,6 +76,33 @@ const createComplaint = async (userId, data, file, ip) => {
     ip_address: ip
   });
 
+    // ═══ Notify BOTH Admin and Provider ═══
+  const shortTitle = title.length > 60 ? title.substring(0, 60) + '...' : title;
+
+  // 1) Notify Admin
+  await notificationModel.create({
+    title: `New Complaint: ${complaint_id}`,
+    message: `${shortTitle} — reported in ${locality} (${category})`,
+    sender_id: userId,
+    sender_role: 'system',
+    target_type: 'admin',
+    target_user_id: null,
+    complaint_id: newId,
+    category: category
+  });
+
+  // 2) Notify all Providers
+  await notificationModel.create({
+    title: `New Complaint: ${complaint_id}`,
+    message: `${shortTitle} — reported in ${locality} (${category})`,
+    sender_id: userId,
+    sender_role: 'system',
+    target_type: 'provider',
+    target_user_id: null,
+    complaint_id: newId,
+    category: category
+  });
+
   const complaint = await complaintModel.findById(newId);
   return complaint;
 };

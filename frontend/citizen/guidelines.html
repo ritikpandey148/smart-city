@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guidelines — SMART CITY</title>
+
+  <link rel="icon" type="image/png" href="../assets/images/smart-city-logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    body { margin: 0; background: #f0f1f3; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.4s ease-out both; }
+    .d-1 { animation-delay: 0.05s; }
+    .d-2 { animation-delay: 0.10s; }
+    .d-3 { animation-delay: 0.15s; }
+    .d-4 { animation-delay: 0.20s; }
+
+    #mobileDrawer { transition: transform 0.3s ease-out; }
+
+    ::selection { background: #E21B2D; color: white; }
+    input::-webkit-credentials-auto-fill-button { display: none !important; }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-30 bg-white/85 backdrop-blur-md border-b border-gray-100">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+      <a href="dashboard.html" class="flex items-center gap-2.5 flex-shrink-0">
+        <img src="../assets/images/smart-city-logo.png" alt="SMART CITY" class="w-11 h-11 object-contain" style="mix-blend-mode: multiply;" />
+        <div class="hidden sm:block">
+          <div class="text-[15px] font-bold leading-tight">
+            <span class="text-[#343A40]">SMART</span> <span class="text-[#E21B2D]">CITY</span>
+          </div>
+          <div class="text-[10.5px] text-[#6b7280] leading-tight">Smart Citizen, Smart City</div>
+        </div>
+      </a>
+      <div class="flex items-center gap-2">
+        <button class="w-10 h-10 rounded-full bg-[#343A40] text-white font-semibold text-[15px] flex items-center justify-center shadow-md">
+          <span id="userAvatar">C</span>
+        </button>
+        <button id="menuToggle" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+          <i data-lucide="menu" class="w-5 h-5 text-[#343A40]"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- DRAWER -->
+  <div id="drawerBackdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40"></div>
+  <aside id="mobileDrawer"
+         class="fixed right-0 top-0 bottom-0 w-[280px] bg-white z-50 flex flex-col shadow-2xl"
+         style="transform: translateX(100%);">
+    <div class="px-5 pt-5 pb-4 flex items-center justify-between border-b border-gray-100">
+      <span class="text-[15px] font-bold text-[#1a1d21]">Menu</span>
+      <button id="drawerClose" class="p-1.5 hover:bg-gray-100 rounded-lg">
+        <i data-lucide="x" class="w-5 h-5 text-gray-500"></i>
+      </button>
+    </div>
+    <nav class="flex-1 px-3 py-3 overflow-y-auto">
+      <a href="dashboard.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="home" class="w-[18px] h-[18px]"></i> Dashboard
+      </a>
+      <a href="report-garbage.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="trash-2" class="w-[18px] h-[18px]"></i> Report Garbage
+      </a>
+      <a href="report-potholes.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="construction" class="w-[18px] h-[18px]"></i> Report Pothole
+      </a>
+      <a href="report-others.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="layout-grid" class="w-[18px] h-[18px]"></i> Report Others
+      </a>
+      <a href="complaints.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="file-text" class="w-[18px] h-[18px]"></i> My Complaints
+      </a>
+      <a href="track-status.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="map-pin" class="w-[18px] h-[18px]"></i> Track Status
+      </a>
+      <a href="notifications.html" class="flex items-center justify-between px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <span class="flex items-center gap-3"><i data-lucide="bell" class="w-[18px] h-[18px]"></i> Notifications</span>
+      </a>
+      <a href="profile.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="user" class="w-[18px] h-[18px]"></i> Profile
+      </a>
+      <a href="help.html" class="flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#4a5057] hover:bg-gray-50">
+        <i data-lucide="headphones" class="w-[18px] h-[18px]"></i> Help &amp; Support
+      </a>
+      <button data-logout class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-[14px] font-medium text-[#E21B2D] hover:bg-red-50 mt-2">
+        <i data-lucide="log-out" class="w-[18px] h-[18px]"></i> Logout
+      </button>
+    </nav>
+  </aside>
+
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-5">
+
+    <!-- Back -->
+    <button id="backBtn" class="fade-up d-1 flex items-center gap-2 bg-white hover:bg-gray-50 text-[#343A40] hover:text-[#E21B2D] text-[13px] font-medium px-4 py-2.5 rounded-full shadow-sm hover:shadow-md transition-all">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      <span>Back to Dashboard</span>
+    </button>
+
+    <!-- HERO -->
+    <section class="fade-up d-2 relative rounded-2xl overflow-hidden bg-[#fde8ea] shadow-[0_15px_40px_-15px_rgba(226,27,45,0.4)]">
+      <div class="absolute inset-0">
+        <img src="../assets/images/help-hero.jpg" alt="" class="w-full h-full object-cover opacity-70" onerror="this.style.display='none'" />
+      </div>
+      <div class="relative z-10 px-6 sm:px-10 py-8 sm:py-10 max-w-2xl">
+        <div class="inline-flex items-center gap-2 mb-2">
+          <span class="w-6 h-0.5 bg-[#E21B2D]"></span>
+          <span class="text-[11.5px] font-bold text-[#E21B2D] tracking-wider">HELP &amp; SUPPORT</span>
+        </div>
+        <h1 class="text-[30px] sm:text-[44px] font-bold leading-tight">
+          <span class="text-[#343A40]">Guide</span><span class="text-[#E21B2D]">lines</span>
+        </h1>
+        <p class="text-[13px] sm:text-[15px] text-[#4a5057] mt-2 leading-snug max-w-lg">
+          Please follow these guidelines while reporting an issue to help us maintain a clean, safe and better city.
+        </p>
+      </div>
+    </section>
+
+    <!-- WHY GUIDELINES -->
+    <section class="fade-up d-2 bg-[#fde8ea] rounded-2xl p-5 sm:p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8 md:divide-x md:divide-[#f8c4ca]">
+
+        <!-- Left -->
+        <div class="flex items-start gap-4 md:pr-6">
+          <div class="w-14 h-14 rounded-2xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+            <i data-lucide="clipboard-list" class="w-7 h-7 text-[#E21B2D]"></i>
+          </div>
+          <div>
+            <h2 class="text-[17px] sm:text-[19px] font-bold text-[#1a1d21]">Why Guidelines?</h2>
+            <p class="text-[12.5px] sm:text-[13.5px] text-[#4a5057] mt-1.5 leading-relaxed">
+              These guidelines ensure that your reports are genuine, accurate and helpful. They help the civic authorities to take faster and more effective action for a cleaner and safer city.
+            </p>
+          </div>
+        </div>
+
+        <!-- Right -->
+        <div class="flex items-start gap-4 md:pl-6">
+          <div class="w-14 h-14 rounded-2xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+            <i data-lucide="shield-check" class="w-7 h-7 text-[#E21B2D]"></i>
+          </div>
+          <div>
+            <h2 class="text-[15.5px] sm:text-[17px] font-bold text-[#1a1d21] leading-snug">Your Responsible Reporting Makes a Real Difference</h2>
+            <p class="text-[12.5px] sm:text-[13.5px] text-[#4a5057] mt-1.5 leading-relaxed">
+              Report genuine issues, provide correct information and help build a better city for all.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- DO's AND DON'Ts -->
+    <section class="fade-up d-3 grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+      <!-- ═══ DO's ═══ -->
+      <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm">
+
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0 shadow-md">
+            <i data-lucide="check" class="w-6 h-6 text-white" stroke-width="3"></i>
+          </div>
+          <div>
+            <h2 class="text-[19px] sm:text-[21px] font-bold text-[#1a1d21]">Do's</h2>
+            <p class="text-[12.5px] text-[#6b7280] mt-0.5">What you should do while reporting</p>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+
+          <div class="flex items-start gap-3.5 bg-green-50/60 hover:bg-green-50 rounded-xl p-4 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="camera" class="w-5 h-5 text-green-600"></i>
+            </div>
+            <div>
+              <h4 class="text-[14px] font-bold text-[#1a1d21]">Upload a clear and real photo</h4>
+              <p class="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
+                Take a recent photo of the actual issue. Ensure the image is clear and taken from the location of the problem.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 bg-green-50/60 hover:bg-green-50 rounded-xl p-4 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="map-pin" class="w-5 h-5 text-green-600"></i>
+            </div>
+            <div>
+              <h4 class="text-[14px] font-bold text-[#1a1d21]">Provide correct location</h4>
+              <p class="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
+                Use the map or current location to select the exact spot. Also enter the correct area/landmark and pincode.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 bg-green-50/60 hover:bg-green-50 rounded-xl p-4 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="file-text" class="w-5 h-5 text-green-600"></i>
+            </div>
+            <div>
+              <h4 class="text-[14px] font-bold text-[#1a1d21]">Give a meaningful title and description</h4>
+              <p class="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
+                Clearly explain the issue with proper details so that authorities can understand and take action quickly.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 bg-green-50/60 hover:bg-green-50 rounded-xl p-4 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="list-checks" class="w-5 h-5 text-green-600"></i>
+            </div>
+            <div>
+              <h4 class="text-[14px] font-bold text-[#1a1d21]">Select the correct issue type</h4>
+              <p class="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
+                Choose the right category (e.g. Overflowing Dustbin, Waste on Road, Illegal Dumping, Pothole, etc.) for your report.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 bg-green-50/60 hover:bg-green-50 rounded-xl p-4 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="radar" class="w-5 h-5 text-green-600"></i>
+            </div>
+            <div>
+              <h4 class="text-[14px] font-bold text-[#1a1d21]">Track your complaint</h4>
+              <p class="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
+                Check the status in 'My Complaints' section to stay updated on the action taken.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ═══ DON'Ts ═══ -->
+      <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm">
+
+        <div class="flex items-start gap-4 mb-5">
+          <div class="w-12 h-12 rounded-full bg-[#E21B2D] flex items-center justify-center flex-shrink-0 shadow-md">
+            <i data-lucide="x" class="w-6 h-6 text-white" stroke-width="3"></i>
+          </div>
+          <div>
+            <h2 class="text-[19px] sm:text-[21px] font-bold text-[#1a1d21]">Don'ts</h2>
+            <p class="text-[12.5px] text-[#6b7280] mt-0.5">What you should avoid while reporting</p>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+
+          <div class="flex items-start gap-3.5 bg-red-50/60 hover:bg-red-50 rounded-xl p-4 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="image-off" class="w-5 h-5 text-[#E21B2D]"></i>
+            </div>
+            <div>
+              <h4 class="text-[14px] font-bold text-[#E21B2D]">Do not upload fake or AI generated images</h4>
+              <p class="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
+                Upload only real photos. Edited, fake or AI generated images are not allowed and may lead to rejection of your report.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 bg-red-50/60 hover:bg-red-50 rounded-xl p-4 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="map-pin-off" class="w-5 h-5 text-[#E21B2D]"></i>
+            </div>
+            <div>
+              <h4 class="text-[14px] font-bold text-[#E21B2D]">Do not provide wrong or fake location</h4>
+              <p class="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
+                Do not intentionally give incorrect location. Fake locations may mislead authorities and such reports can be removed.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 bg-red-50/60 hover:bg-red-50 rounded-xl p-4 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="file-x" class="w-5 h-5 text-[#E21B2D]"></i>
+            </div>
+            <div>
+              <h4 class="text-[14px] font-bold text-[#E21B2D]">Do not submit false or duplicate reports</h4>
+              <p class="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
+                Do not report issues that do not exist or are already reported. Repeated false reports may result in restricted access.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 bg-red-50/60 hover:bg-red-50 rounded-xl p-4 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="ban" class="w-5 h-5 text-[#E21B2D]"></i>
+            </div>
+            <div>
+              <h4 class="text-[14px] font-bold text-[#E21B2D]">Do not misuse the platform</h4>
+              <p class="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
+                Do not upload unrelated content, inappropriate images or use abusive language in title/description.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 bg-red-50/60 hover:bg-red-50 rounded-xl p-4 transition-colors">
+            <div class="w-11 h-11 rounded-xl bg-red-100 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="alarm-clock" class="w-5 h-5 text-[#E21B2D]"></i>
+            </div>
+            <div>
+              <h4 class="text-[14px] font-bold text-[#E21B2D]">Do not report resolved or non-existent issues</h4>
+              <p class="text-[12px] text-[#6b7280] mt-1 leading-relaxed">
+                Check if the issue is still present before reporting. Do not submit reports for already resolved or old issues.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- BOTTOM NOTES -->
+    <section class="fade-up d-4 grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+      <!-- Important Note -->
+      <div class="bg-[#e8f2f6] border border-[#c6deeb] rounded-2xl p-5 flex items-start gap-4">
+        <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+          <i data-lucide="info" class="w-5 h-5 text-blue-600"></i>
+        </div>
+        <div>
+          <h3 class="text-[14.5px] font-bold text-[#1a1d21]">Important Note</h3>
+          <p class="text-[12.5px] text-[#4a5057] mt-1 leading-relaxed">
+            Anyone found submitting fake, misleading or inappropriate reports may face removal of the report and restricted access to the platform.
+          </p>
+        </div>
+      </div>
+
+      <!-- Responsible Reporting -->
+      <div class="bg-[#fdf3d9] border border-[#f3e0a8] rounded-2xl p-5 flex items-start gap-4">
+        <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+          <i data-lucide="scale" class="w-5 h-5 text-amber-600"></i>
+        </div>
+        <div>
+          <h3 class="text-[14.5px] font-bold text-[#1a1d21]">Responsible Reporting Builds a Better City</h3>
+          <p class="text-[12.5px] text-[#4a5057] mt-1 leading-relaxed">
+            Let's work together to keep our city clean, safe and sustainable for a brighter tomorrow.
+          </p>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/guard.js"></script>
+  <script src="../js/side-menu.js"></script>
+  <script>
+    lucide.createIcons();
+
+    // Simple page logic — no separate JS file needed
+    (async () => {
+      const user = await Guard.protect('citizen');
+      if (!user) return;
+
+      Guard.startHeartbeat();
+      SideMenu.init(user);
+
+      // Avatar initial
+      const initial = (user.first_name || 'C').charAt(0).toUpperCase();
+      const av = document.getElementById('userAvatar');
+      if (av) av.textContent = initial;
+
+      // Menu drawer
+      const toggle = document.getElementById('menuToggle');
+      const drawer = document.getElementById('mobileDrawer');
+      const backdrop = document.getElementById('drawerBackdrop');
+      const close = document.getElementById('drawerClose');
+
+      const open = () => {
+        drawer?.classList.remove('-translate-x-full');
+        drawer.style.transform = 'translateX(0)';
+        backdrop?.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+      };
+      const closeFn = () => {
+        drawer?.classList.add('-translate-x-full');
+        drawer.style.transform = 'translateX(100%)';
+        backdrop?.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+      };
+
+      toggle?.addEventListener('click', open);
+      close?.addEventListener('click', closeFn);
+      backdrop?.addEventListener('click', closeFn);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeFn(); });
+
+      // Logout
+      document.querySelectorAll('[data-logout]').forEach(el => {
+        el.addEventListener('click', async (e) => {
+          e.preventDefault();
+          try { await API.post('/auth/logout'); } catch (err) {}
+          API.clearToken();
+          window.location.href = '/login.html';
+        });
+      });
+
+      // Back button
+      document.getElementById('backBtn')?.addEventListener('click', () => {
+        window.location.href = 'dashboard.html';
+      });
+
+      lucide.createIcons();
+    })();
+  </script>
+
+</body>
+</html>

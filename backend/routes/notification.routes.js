@@ -9,6 +9,8 @@ router.use(authMiddleware);
 
 // Any logged-in user
 router.get('/my', notificationController.getMy);
+router.get('/unread-count', notificationController.getUnread);
+router.put('/mark-all-read', notificationController.markAllRead);
 router.put('/:id/read', notificationController.markRead);
 
 // Admin only
