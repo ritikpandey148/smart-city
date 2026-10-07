@@ -74,31 +74,36 @@ const assignProvider = async (complaintId, providerId, adminId) => {
   );
 };
 
-// ============ USERS ============
 const getAllUsers = async (filters = {}) => {
-  let sql = `SELECT id, first_name, last_name, gender, mobile, username,
-                    locality, pincode, role, account_status,
-                    last_login, last_seen, created_at
-             FROM users
-             WHERE role = 'citizen'`;
+  let sql = `SELECT u.id, u.first_name, u.last_name, u.gender, u.mobile, u.username,
+                    u.locality, u.pincode, u.role, u.account_status,
+                    u.last_login, u.last_seen, u.created_at,
+                    (SELECT COUNT(*) FROM complaints WHERE user_id = u.id) AS complaint_count
+             FROM users u
+             WHERE u.role = 'citizen'`;
   const params = [];
 
   if (filters.search) {
-    sql += ' AND (first_name LIKE ? OR last_name LIKE ? OR username LIKE ?)';
+    sql += ' AND (u.first_name LIKE ? OR u.last_name LIKE ? OR u.username LIKE ? OR u.mobile LIKE ?)';
     const like = `%${filters.search}%`;
-    params.push(like, like, like);
+    params.push(like, like, like, like);
   }
   if (filters.locality) {
-    sql += ' AND locality = ?';
+    sql += ' AND u.locality = ?';
     params.push(filters.locality);
   }
   if (filters.status) {
-    sql += ' AND account_status = ?';
+    sql += ' AND u.account_status = ?';
     params.push(filters.status);
   }
-  sql += ' ORDER BY created_at DESC';
+  sql += ' ORDER BY u.created_at DESC';
   const [rows] = await db.query(sql, params);
-  return rows;
+
+  // Convert complaint_count to Number
+  return rows.map(r => ({
+    ...r,
+    complaint_count: Number(r.complaint_count) || 0
+  }));
 };
 
 const getUserDetail = async (userId) => {

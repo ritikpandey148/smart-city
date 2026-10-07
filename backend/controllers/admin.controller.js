@@ -129,6 +129,15 @@ const getActivity = async (req, res, next) => {
   }
 };
 
+const sendUserMessage = async (req, res, next) => {
+  try {
+    const result = await adminService.sendUserMessage(req.user.id, req.body);
+    return success(res, result, 'Message sent successfully', 201);
+  } catch (err) {
+    if (err.status) return error(res, err.message, err.status);
+    next(err);
+  }
+};
 module.exports = {
   getAllComplaints,
   getComplaintDetail,
@@ -139,5 +148,6 @@ module.exports = {
   getAllProviders,
   toggleProviderStatus,
   getStats,
-  getActivity
+  getActivity,
+  sendUserMessage   // ⬅️ add karo
 };

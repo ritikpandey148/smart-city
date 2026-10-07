@@ -60,4 +60,15 @@ const changePassword = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, me, logout, updateProfile, changePassword };
+const changeUsername = async (req, res, next) => {
+  try {
+    const { current_password, new_username } = req.body;
+    const user = await authService.changeUsername(req.user.id, current_password, new_username);
+    return success(res, user, 'Username updated successfully');
+  } catch (err) {
+    if (err.status) return error(res, err.message, err.status);
+    next(err);
+  }
+};
+
+module.exports = { register, login, me, logout, updateProfile, changePassword, changeUsername };

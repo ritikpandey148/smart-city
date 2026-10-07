@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service Provider — MyBMC | Admin</title>
+
+  <link rel="icon" type="image/png" href="../assets/images/smart-city-logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    body { margin: 0; background: #f0f1f3; }
+
+    .spinner, .spinner-sm {
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    .spinner { width: 20px; height: 20px; }
+    .spinner-sm { width: 14px; height: 14px; border-width: 2px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #adminSidebar { background: #1a1d21; }
+    .side-link {
+      display: flex; align-items: center; gap: 14px;
+      padding: 11px 18px; border-radius: 10px;
+      font-size: 13.5px; font-weight: 500;
+      color: #cbd0d6; margin-bottom: 2px;
+      transition: all 0.2s ease;
+    }
+    .side-link:hover:not(.active) { background: rgba(255,255,255,0.05); color: #fff; }
+    .side-link.active { background: #E21B2D; color: #fff; box-shadow: 0 8px 20px -6px rgba(226,27,45,0.55); }
+
+    #mobileDrawer { transition: transform 0.3s ease-out; }
+
+    .table-scroll { overflow-x: auto; }
+    .table-scroll::-webkit-scrollbar { height: 6px; }
+    .table-scroll::-webkit-scrollbar-thumb { background: #cbd0d6; border-radius: 10px; }
+
+    /* Chat scrollbar */
+    .chat-scroll::-webkit-scrollbar { width: 6px; }
+    .chat-scroll::-webkit-scrollbar-thumb { background: #cbd0d6; border-radius: 10px; }
+    .chat-scroll::-webkit-scrollbar-track { background: transparent; }
+
+    ::selection { background: #E21B2D; color: white; }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside id="adminSidebar" class="hidden lg:flex fixed left-0 top-0 bottom-0 w-[230px] flex-col z-30">
+    <div class="px-5 pt-6 pb-5">
+      <div class="flex items-center gap-2.5">
+        <img src="../assets/images/smart-city-logo.png" class="w-11 h-11 object-contain bg-white rounded-full p-0.5" />
+        <div>
+          <div class="text-[13px] font-bold leading-tight text-white">SMART <span class="text-[#E21B2D]">CITY</span></div>
+          <div class="text-[9.5px] text-gray-400 leading-tight mt-0.5">Smart Citizen, Smart City</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="flex-1 px-3 overflow-y-auto pb-4">
+      <a href="dashboard.html" class="side-link"><i data-lucide="home" class="w-[17px] h-[17px]"></i><span>Dashboard</span></a>
+      <a href="complaints.html" class="side-link"><i data-lucide="clipboard-list" class="w-[17px] h-[17px]"></i><span>All Complaints</span></a>
+      <a href="complaints.html?cat=garbage" class="side-link"><i data-lucide="trash-2" class="w-[17px] h-[17px]"></i><span>Garbage Reports</span></a>
+      <a href="complaints.html?cat=pothole" class="side-link"><i data-lucide="construction" class="w-[17px] h-[17px]"></i><span>Pothole Reports</span></a>
+      <a href="complaints.html?cat=others" class="side-link"><i data-lucide="layout-grid" class="w-[17px] h-[17px]"></i><span>Other Reports</span></a>
+      <a href="users.html" class="side-link"><i data-lucide="users" class="w-[17px] h-[17px]"></i><span>Users</span></a>
+      <a href="providers.html" class="side-link active"><i data-lucide="building-2" class="w-[17px] h-[17px]"></i><span>Service Provider</span></a>
+      <a href="notifications.html" class="side-link"><i data-lucide="bell" class="w-[17px] h-[17px]"></i><span>Notifications</span></a>
+      <div class="h-px bg-white/10 my-3"></div>
+      <a href="profile.html" class="side-link"><i data-lucide="user" class="w-[17px] h-[17px]"></i><span>Profile</span></a>
+      <button data-logout class="side-link w-full text-left hover:bg-red-500/10"><i data-lucide="log-out" class="w-[17px] h-[17px]"></i><span>Logout</span></button>
+    </nav>
+  </aside>
+
+  <!-- MOBILE DRAWER -->
+  <div id="drawerBackdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"></div>
+  <aside id="mobileDrawer" class="fixed left-0 top-0 bottom-0 w-[250px] bg-[#1a1d21] z-50 flex flex-col shadow-2xl" style="transform: translateX(-100%);">
+    <div class="px-5 pt-5 pb-4 flex items-center justify-between border-b border-white/10">
+      <div class="flex items-center gap-2">
+        <img src="../assets/images/smart-city-logo.png" class="w-9 h-9 object-contain bg-white rounded-full p-0.5" />
+        <span class="text-[13px] font-bold text-white">SMART <span class="text-[#E21B2D]">CITY</span></span>
+      </div>
+      <button id="drawerClose" class="p-1.5 hover:bg-white/10 rounded-lg"><i data-lucide="x" class="w-5 h-5 text-white"></i></button>
+    </div>
+    <nav class="flex-1 px-3 py-3 overflow-y-auto">
+      <a href="dashboard.html" class="side-link"><i data-lucide="home" class="w-[17px] h-[17px]"></i><span>Dashboard</span></a>
+      <a href="complaints.html" class="side-link"><i data-lucide="clipboard-list" class="w-[17px] h-[17px]"></i><span>All Complaints</span></a>
+      <a href="users.html" class="side-link"><i data-lucide="users" class="w-[17px] h-[17px]"></i><span>Users</span></a>
+      <a href="providers.html" class="side-link active"><i data-lucide="building-2" class="w-[17px] h-[17px]"></i><span>Service Provider</span></a>
+      <a href="notifications.html" class="side-link"><i data-lucide="bell" class="w-[17px] h-[17px]"></i><span>Notifications</span></a>
+      <a href="profile.html" class="side-link"><i data-lucide="user" class="w-[17px] h-[17px]"></i><span>Profile</span></a>
+      <button data-logout class="side-link w-full text-left"><i data-lucide="log-out" class="w-[17px] h-[17px]"></i><span>Logout</span></button>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="lg:ml-[230px] min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-20 bg-white border-b border-gray-100">
+      <div class="px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <button id="menuToggle" class="lg:hidden p-2 hover:bg-gray-100 rounded-lg flex-shrink-0">
+            <i data-lucide="menu" class="w-5 h-5 text-[#343A40]"></i>
+          </button>
+          <div class="min-w-0">
+            <h1 class="text-[16px] sm:text-[19px] font-bold text-[#1a1d21] leading-tight">Admin Dashboard</h1>
+            <p class="text-[11.5px] text-[#6b7280] leading-tight truncate">Manage complaints, users and service provider.</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <div class="relative">
+            <a href="notifications.html" class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors">
+              <i data-lucide="bell" class="w-5 h-5 text-[#343A40]"></i>
+            </a>
+            <span id="bellBadge" class="hidden absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-[#E21B2D] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">0</span>
+          </div>
+          <div class="flex items-center gap-2 pl-3 border-l border-gray-200">
+            <div class="hidden sm:block text-right">
+              <div class="text-[12.5px] font-bold text-[#1a1d21] leading-tight">Admin</div>
+              <div class="text-[10.5px] text-[#6b7280] leading-tight">BMC Mumbai</div>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-[#1a1d21] flex items-center justify-center overflow-hidden shadow-md">
+              <img src="../assets/images/bmc-logo.png" alt="" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='<span id=\'adminAvatar\' class=\'text-white font-bold text-[15px]\'>A</span>';" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="flex-1 p-4 sm:p-6 space-y-5">
+
+      <!-- HERO -->
+      <section class="relative rounded-2xl overflow-hidden bg-[#fde8ea] shadow-sm">
+        <div class="absolute inset-0">
+          <img src="../assets/images/help-hero.jpg" alt="" class="w-full h-full object-cover opacity-50" onerror="this.style.display='none'" />
+        </div>
+        <div class="relative z-10 px-6 sm:px-8 py-6 sm:py-8 flex items-center gap-6">
+          <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white flex items-center justify-center flex-shrink-0 shadow-md border-2 border-white">
+            <img src="../assets/images/bmc-logo.png" alt="BMC" class="w-full h-full object-contain p-1 rounded-2xl" onerror="this.style.display='none'" />
+          </div>
+          <div class="min-w-0">
+            <h1 class="text-[28px] sm:text-[40px] font-bold leading-tight">
+              <span class="text-[#343A40]">My</span><span class="text-[#E21B2D]">BMC</span>
+            </h1>
+            <p class="text-[12.5px] sm:text-[14px] text-[#4a5057] mt-1.5 leading-snug max-w-xl">
+              Official service provider for handling city complaints assigned through the Smart City platform.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- STATUS + LIVE CHAT ROW -->
+      <section class="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4">
+
+        <!-- Status card -->
+        <div class="bg-white rounded-2xl p-5 border border-gray-100 flex items-center gap-4">
+          <div id="providerOnlineStatus" class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="wifi-off" class="w-7 h-7 text-gray-400"></i>
+          </div>
+          <div class="min-w-0">
+            <div class="text-[12px] font-semibold text-[#6b7280] uppercase tracking-wide">Service Provider Status</div>
+            <div id="providerStatusText" class="text-[20px] font-bold text-gray-500 leading-tight mt-0.5">Offline</div>
+            <div id="providerStatusDesc" class="text-[12px] text-[#6b7280] mt-0.5">Checking status...</div>
+          </div>
+        </div>
+
+        <!-- Live Chat button -->
+        <button id="openChatBtn" class="bg-[#E21B2D] hover:bg-[#c41525] text-white rounded-2xl px-6 py-5 flex items-center gap-4 shadow-lg transition-all min-w-[280px] relative">
+          <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="message-circle" class="w-6 h-6 text-white"></i>
+          </div>
+          <div class="text-left flex-1">
+            <div class="text-[16px] font-bold leading-tight">Live Chat</div>
+            <div class="text-[12px] text-white/85 mt-0.5">Chat directly with MyBMC team</div>
+          </div>
+          <i data-lucide="chevron-right" class="w-5 h-5 text-white"></i>
+          <span id="chatUnreadBadge" class="hidden absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-[#343A40] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">0</span>
+        </button>
+
+      </section>
+
+      <!-- MAIN GRID: Stats + Chat Preview -->
+      <section class="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-5">
+
+        <!-- LEFT: Complaint Status -->
+        <div class="space-y-5">
+
+          <div class="bg-white rounded-2xl p-5 border border-gray-100">
+
+            <div class="flex items-center justify-between mb-5">
+              <h2 class="text-[16px] font-bold text-[#1a1d21]">Complaint Status <span class="text-[13px] text-[#6b7280] font-normal">(Assigned to MyBMC)</span></h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-6 items-center">
+
+              <!-- Chart -->
+              <div class="relative" style="height:220px;">
+                <canvas id="complaintChart"></canvas>
+                <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                  <div id="chartCenterTotal" class="text-[26px] font-bold text-[#1a1d21] leading-none">0</div>
+                  <div class="text-[11px] text-[#6b7280] mt-0.5">Assigned</div>
+                </div>
+              </div>
+
+              <!-- Stat Cards -->
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+
+                <div class="bg-[#fff5f6] rounded-2xl p-3.5 border border-[#fdd]">
+                  <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center mb-2">
+                    <i data-lucide="clipboard-list" class="w-4 h-4 text-[#E21B2D]"></i>
+                  </div>
+                  <div id="statTotalAssigned" class="text-[22px] font-bold text-[#1a1d21] leading-none">0</div>
+                  <div class="text-[11px] text-[#6b7280] mt-1">Total Assigned</div>
+                </div>
+
+                <div class="bg-green-50 rounded-2xl p-3.5 border border-green-100">
+                  <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center mb-2">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-green-600"></i>
+                  </div>
+                  <div id="statResolved" class="text-[22px] font-bold text-[#1a1d21] leading-none">0</div>
+                  <div class="text-[11px] text-[#6b7280] mt-1">Resolved</div>
+                </div>
+
+                <div class="bg-orange-50 rounded-2xl p-3.5 border border-orange-100">
+                  <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center mb-2">
+                    <i data-lucide="loader" class="w-4 h-4 text-orange-600"></i>
+                  </div>
+                  <div id="statInProgress" class="text-[22px] font-bold text-[#1a1d21] leading-none">0</div>
+                  <div class="text-[11px] text-[#6b7280] mt-1">In Progress</div>
+                </div>
+
+                <div class="bg-amber-50 rounded-2xl p-3.5 border border-amber-100">
+                  <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center mb-2">
+                    <i data-lucide="eye" class="w-4 h-4 text-amber-600"></i>
+                  </div>
+                  <div id="statInReview" class="text-[22px] font-bold text-[#1a1d21] leading-none">0</div>
+                  <div class="text-[11px] text-[#6b7280] mt-1">In Review</div>
+                </div>
+
+                <div class="bg-blue-50 rounded-2xl p-3.5 border border-blue-100">
+                  <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center mb-2">
+                    <i data-lucide="clock" class="w-4 h-4 text-blue-600"></i>
+                  </div>
+                  <div id="statSubmitted" class="text-[22px] font-bold text-[#1a1d21] leading-none">0</div>
+                  <div class="text-[11px] text-[#6b7280] mt-1">Submitted</div>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Recent Assigned Complaints -->
+          <div class="bg-white rounded-2xl p-5 border border-gray-100">
+
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-[16px] font-bold text-[#1a1d21]">Recent Assigned Complaints <span class="text-[13px] text-[#6b7280] font-normal">(for MyBMC)</span></h2>
+              <a href="complaints.html" class="text-[12.5px] text-[#E21B2D] font-semibold hover:underline">View All →</a>
+            </div>
+
+            <div class="table-scroll -mx-5 px-5">
+              <table class="w-full min-w-[800px]">
+                <thead>
+                  <tr class="text-left border-b border-gray-100 bg-[#f9fafb]">
+                    <th class="py-2.5 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">#</th>
+                    <th class="py-2.5 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">Complaint ID</th>
+                    <th class="py-2.5 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">Type</th>
+                    <th class="py-2.5 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">Location</th>
+                    <th class="py-2.5 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">Assigned On</th>
+                    <th class="py-2.5 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">Status</th>
+                    <th class="py-2.5 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="complaintsBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: Chat Preview -->
+        <div class="space-y-5">
+
+          <div class="bg-white rounded-2xl p-5 border border-gray-100 flex flex-col h-full min-h-[400px]">
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-[#ffe5e8] flex items-center justify-center">
+                  <i data-lucide="message-circle" class="w-4 h-4 text-[#E21B2D]"></i>
+                </div>
+                <h3 class="text-[14px] font-bold text-[#1a1d21]">Live Chat with MyBMC</h3>
+              </div>
+              <span id="chatPanelStatus" class="inline-flex items-center gap-1.5 text-[10.5px] font-semibold text-green-600">
+  <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Online
+</span>
+            </div>
+
+            <!-- Chat preview window -->
+            <div id="openChatSmall" class="flex-1 flex flex-col bg-[#f9fafb] rounded-xl p-4 mb-3 cursor-pointer hover:bg-[#f0f1f3] transition-colors">
+              <div class="flex items-start gap-3">
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 border border-gray-200">
+                  <img src="../assets/images/bmc-logo.png" class="w-full h-full object-contain rounded-full p-0.5" onerror="this.style.display='none'" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="text-[12.5px] font-semibold text-[#1a1d21]">MyBMC Support</div>
+                  <div class="mt-1.5 text-[12.5px] text-[#6b7280] leading-snug line-clamp-3" id="chatPreviewText">
+                    No messages yet. Start the conversation.
+                  </div>
+                  <div id="chatPreviewTime" class="text-[10.5px] text-[#9ca3af] mt-2"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Small input (disabled — click to open full chat) -->
+            <button id="openChatSmallBtn" class="w-full flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 hover:border-[#E21B2D] transition-colors text-left" onclick="AdminProvider.openChat()">
+              <span class="text-[12.5px] text-[#9ca3af] flex-1">Type your message...</span>
+              <span class="w-8 h-8 rounded-full bg-[#E21B2D] flex items-center justify-center">
+                <i data-lucide="send" class="w-3.5 h-3.5 text-white"></i>
+              </span>
+            </button>
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ═══════════ FULL CHAT MODAL ═══════════ -->
+  <div id="chatModal" class="hidden fixed inset-0 z-[150] items-center justify-center p-3 sm:p-6">
+    <div id="chatModalBackdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+
+    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl h-[92vh] max-h-[720px] flex flex-col overflow-hidden">
+
+      <!-- Chat header -->
+      <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-gray-100 bg-white flex-shrink-0">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-11 h-11 rounded-full bg-white flex items-center justify-center border border-gray-200 flex-shrink-0">
+            <img src="../assets/images/bmc-logo.png" class="w-full h-full object-contain rounded-full p-1" onerror="this.style.display='none'" />
+          </div>
+          <div class="min-w-0">
+            <div class="text-[14.5px] font-bold text-[#1a1d21] truncate">MyBMC Support</div>
+            <div id="chatHeaderStatus" class="mt-0.5">
+              <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-green-600">
+                <span class="w-2 h-2 rounded-full bg-green-500"></span> Online
+              </span>
+            </div>
+          </div>
+        </div>
+        <button id="closeChatBtn" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors flex-shrink-0">
+          <i data-lucide="x" class="w-4 h-4 text-[#343A40]"></i>
+        </button>
+      </div>
+
+      <!-- Messages -->
+      <div id="chatMessages" class="flex-1 overflow-y-auto p-5 chat-scroll bg-[#f9fafb]"></div>
+
+      <!-- Input -->
+      <div class="border-t border-gray-100 p-3 sm:p-4 bg-white flex-shrink-0">
+        <form id="chatForm" class="flex items-end gap-2">
+          <div class="flex-1 relative">
+            <textarea id="chatInput" rows="1" placeholder="Type your message..."
+                      class="w-full border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none transition-all focus:border-[#E21B2D] focus:ring-3 focus:ring-[#E21B2D]/10 resize-none max-h-[100px]"
+                      style="min-height:44px;"></textarea>
+          </div>
+          <button type="submit" class="w-11 h-11 rounded-xl bg-[#E21B2D] hover:bg-[#c41525] flex items-center justify-center flex-shrink-0 shadow-md transition-all">
+            <i data-lucide="send" class="w-4.5 h-4.5 text-white"></i>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════ MESSAGE CONTEXT MENU ═══════════ -->
+  <div id="msgMenu" class="hidden fixed z-[200] bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 min-w-[180px]">
+    <button id="menuDeleteMe" class="w-full flex items-center gap-2.5 px-4 py-2 text-[12.5px] hover:bg-gray-50 transition-colors text-left">
+      <i data-lucide="trash" class="w-3.5 h-3.5 text-[#6b7280]"></i>
+      <span>Delete for me</span>
+    </button>
+    <button id="menuDeleteAll" class="w-full flex items-center gap-2.5 px-4 py-2 text-[12.5px] hover:bg-red-50 transition-colors text-left text-[#E21B2D]">
+      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+      <span>Delete for everyone</span>
+    </button>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/guard.js"></script>
+  <script src="../js/admin-provider.js"></script>
+  <script>lucide.createIcons();</script>
+
+</body>
+</html>

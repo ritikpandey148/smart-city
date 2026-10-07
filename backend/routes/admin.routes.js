@@ -26,5 +26,7 @@ router.put('/providers/:id/status', adminController.toggleProviderStatus);
 // Stats & Activity
 router.get('/stats', adminController.getStats);
 router.get('/activity', adminController.getActivity);
+// Send message to individual user
+router.post('/send-user-message', adminController.sendUserMessage);
 
 module.exports = router;

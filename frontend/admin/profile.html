@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile — Admin</title>
+
+  <link rel="icon" type="image/png" href="../assets/images/smart-city-logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    body { margin: 0; background: #f0f1f3; }
+
+    .spinner, .spinner-sm {
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    .spinner { width: 20px; height: 20px; }
+    .spinner-sm { width: 14px; height: 14px; border-width: 2px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #adminSidebar { background: #1a1d21; }
+    .side-link {
+      display: flex; align-items: center; gap: 14px;
+      padding: 11px 18px; border-radius: 10px;
+      font-size: 13.5px; font-weight: 500;
+      color: #cbd0d6; margin-bottom: 2px;
+      transition: all 0.2s ease;
+    }
+    .side-link:hover:not(.active) { background: rgba(255,255,255,0.05); color: #fff; }
+    .side-link.active { background: #E21B2D; color: #fff; box-shadow: 0 8px 20px -6px rgba(226,27,45,0.55); }
+
+    #mobileDrawer { transition: transform 0.3s ease-out; }
+
+    .field-input {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 11px 16px 11px 42px;
+      font-size: 13.5px;
+      color: #343A40;
+      outline: none;
+      transition: all 0.2s;
+      background: #f9fafb;
+    }
+    .field-input::placeholder { color: #9ca3af; }
+    .field-input:focus {
+      border-color: #E21B2D;
+      box-shadow: 0 0 0 3px rgba(226, 27, 45, 0.12);
+      background: #fff;
+    }
+    .field-input:disabled {
+      background: #f9fafb;
+      color: #6b7280;
+      cursor: not-allowed;
+    }
+    .field-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af;
+      pointer-events: none;
+      width: 16px;
+      height: 16px;
+    }
+
+    select.field-input {
+      appearance: none;
+      padding-right: 36px;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+
+    .section-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px 22px;
+      border: 1px solid #f3f4f6;
+    }
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+    .section-head-left { display: flex; align-items: center; gap: 12px; }
+    .section-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: #E21B2D;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+    }
+    .section-title { font-size: 15.5px; font-weight: 700; color: #1a1d21; }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff5f6;
+      color: #E21B2D;
+      border: 1px solid #fdd;
+      padding: 7px 14px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .action-btn:hover { background: #ffe5e8; }
+
+    ::selection { background: #E21B2D; color: white; }
+    input::-webkit-credentials-auto-fill-button,
+    input::-webkit-strong-password-auto-fill-button {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside id="adminSidebar" class="hidden lg:flex fixed left-0 top-0 bottom-0 w-[230px] flex-col z-30">
+    <div class="px-5 pt-6 pb-5">
+      <div class="flex items-center gap-2.5">
+        <img src="../assets/images/smart-city-logo.png" class="w-11 h-11 object-contain bg-white rounded-full p-0.5" />
+        <div>
+          <div class="text-[13px] font-bold leading-tight text-white">SMART <span class="text-[#E21B2D]">CITY</span></div>
+          <div class="text-[9.5px] text-gray-400 leading-tight mt-0.5">Smart Citizen, Smart City</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="flex-1 px-3 overflow-y-auto pb-4">
+      <a href="dashboard.html" class="side-link"><i data-lucide="home" class="w-[17px] h-[17px]"></i><span>Dashboard</span></a>
+      <a href="complaints.html" class="side-link"><i data-lucide="clipboard-list" class="w-[17px] h-[17px]"></i><span>All Complaints</span></a>
+      <a href="complaints.html?cat=garbage" class="side-link"><i data-lucide="trash-2" class="w-[17px] h-[17px]"></i><span>Garbage Reports</span></a>
+      <a href="complaints.html?cat=pothole" class="side-link"><i data-lucide="construction" class="w-[17px] h-[17px]"></i><span>Pothole Reports</span></a>
+      <a href="complaints.html?cat=others" class="side-link"><i data-lucide="layout-grid" class="w-[17px] h-[17px]"></i><span>Other Reports</span></a>
+      <a href="users.html" class="side-link"><i data-lucide="users" class="w-[17px] h-[17px]"></i><span>Users</span></a>
+      <a href="providers.html" class="side-link"><i data-lucide="building-2" class="w-[17px] h-[17px]"></i><span>Service Provider</span></a>
+      <a href="notifications.html" class="side-link"><i data-lucide="bell" class="w-[17px] h-[17px]"></i><span>Notifications</span></a>
+      <div class="h-px bg-white/10 my-3"></div>
+      <a href="profile.html" class="side-link active"><i data-lucide="user" class="w-[17px] h-[17px]"></i><span>Profile</span></a>
+      <button data-logout class="side-link w-full text-left hover:bg-red-500/10"><i data-lucide="log-out" class="w-[17px] h-[17px]"></i><span>Logout</span></button>
+    </nav>
+  </aside>
+
+  <!-- MOBILE DRAWER -->
+  <div id="drawerBackdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"></div>
+  <aside id="mobileDrawer" class="fixed left-0 top-0 bottom-0 w-[250px] bg-[#1a1d21] z-50 flex flex-col shadow-2xl" style="transform: translateX(-100%);">
+    <div class="px-5 pt-5 pb-4 flex items-center justify-between border-b border-white/10">
+      <div class="flex items-center gap-2">
+        <img src="../assets/images/smart-city-logo.png" class="w-9 h-9 object-contain bg-white rounded-full p-0.5" />
+        <span class="text-[13px] font-bold text-white">SMART <span class="text-[#E21B2D]">CITY</span></span>
+      </div>
+      <button id="drawerClose" class="p-1.5 hover:bg-white/10 rounded-lg"><i data-lucide="x" class="w-5 h-5 text-white"></i></button>
+    </div>
+    <nav class="flex-1 px-3 py-3 overflow-y-auto">
+      <a href="dashboard.html" class="side-link"><i data-lucide="home" class="w-[17px] h-[17px]"></i><span>Dashboard</span></a>
+      <a href="complaints.html" class="side-link"><i data-lucide="clipboard-list" class="w-[17px] h-[17px]"></i><span>All Complaints</span></a>
+      <a href="users.html" class="side-link"><i data-lucide="users" class="w-[17px] h-[17px]"></i><span>Users</span></a>
+      <a href="providers.html" class="side-link"><i data-lucide="building-2" class="w-[17px] h-[17px]"></i><span>Service Provider</span></a>
+      <a href="notifications.html" class="side-link"><i data-lucide="bell" class="w-[17px] h-[17px]"></i><span>Notifications</span></a>
+      <a href="profile.html" class="side-link active"><i data-lucide="user" class="w-[17px] h-[17px]"></i><span>Profile</span></a>
+      <button data-logout class="side-link w-full text-left"><i data-lucide="log-out" class="w-[17px] h-[17px]"></i><span>Logout</span></button>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="lg:ml-[230px] min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-20 bg-white border-b border-gray-100">
+      <div class="px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <button id="menuToggle" class="lg:hidden p-2 hover:bg-gray-100 rounded-lg flex-shrink-0">
+            <i data-lucide="menu" class="w-5 h-5 text-[#343A40]"></i>
+          </button>
+          <div class="min-w-0">
+            <h1 class="text-[16px] sm:text-[19px] font-bold text-[#1a1d21] leading-tight">Admin Dashboard</h1>
+            <p class="text-[11.5px] text-[#6b7280] leading-tight truncate">Manage complaints, users and service provider.</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <div class="hidden sm:block text-right">
+            <div class="text-[12.5px] font-bold text-[#1a1d21] leading-tight">Admin</div>
+            <div class="text-[10.5px] text-[#6b7280] leading-tight">BMC Mumbai</div>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-[#1a1d21] flex items-center justify-center overflow-hidden shadow-md">
+            <img src="../assets/images/bmc-logo.png" alt="" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='<span id=\'adminAvatar\' class=\'text-white font-bold text-[15px]\'>A</span>';" />
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="flex-1 p-4 sm:p-6 space-y-5 max-w-5xl mx-auto w-full">
+
+      <!-- HERO -->
+      <section class="relative rounded-2xl overflow-hidden bg-[#fde8ea] shadow-sm">
+        <div class="absolute inset-0">
+          <img src="../assets/images/help-hero.jpg" alt="" class="w-full h-full object-cover opacity-60" onerror="this.style.display='none'" />
+        </div>
+        <div class="relative z-10 px-6 sm:px-10 py-8 sm:py-10 max-w-2xl">
+          <h1 class="text-[34px] sm:text-[48px] font-bold leading-none">
+            <span class="text-[#343A40]">My </span><span class="text-[#E21B2D]">Profile</span>
+          </h1>
+          <p class="text-[13px] sm:text-[15px] text-[#4a5057] mt-3 leading-snug max-w-lg">
+            View and manage your personal information and account settings.
+          </p>
+        </div>
+      </section>
+
+      <!-- PROFILE HEADER CARD -->
+      <section class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-5">
+
+          <div class="relative flex-shrink-0">
+            <div class="w-20 h-20 rounded-full bg-[#1a1d21] flex items-center justify-center text-white font-bold text-[28px] shadow-lg overflow-hidden">
+              <img src="../assets/images/bmc-logo.png" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='<span id=\'heroAvatar\'>A</span>';" />
+            </div>
+            <div class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-green-500 border-3 border-white flex items-center justify-center">
+              <i data-lucide="check" class="w-3.5 h-3.5 text-white" stroke-width="3"></i>
+            </div>
+          </div>
+
+          <div class="flex-1 min-w-0">
+            <h2 id="heroFullName" class="text-[20px] sm:text-[22px] font-bold text-[#1a1d21] leading-tight">Admin</h2>
+            <div class="flex items-center gap-2 mt-2 flex-wrap">
+              <span class="inline-flex items-center gap-1.5 bg-red-50 text-[#E21B2D] px-3 py-1 rounded-lg text-[12px] font-bold">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                Administrator
+              </span>
+              <span id="heroUsername" class="text-[12px] text-[#9ca3af] font-mono">@—</span>
+            </div>
+            <p class="text-[12px] text-[#6b7280] mt-2">
+              <i data-lucide="calendar" class="w-3.5 h-3.5 inline-block align-text-bottom mr-1"></i>
+              Member since <span id="heroMemberSince" class="font-semibold text-[#343A40]">—</span>
+            </p>
+          </div>
+
+          <button id="editBtn" class="action-btn flex-shrink-0">
+            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+            <span>Edit Profile</span>
+          </button>
+
+        </div>
+      </section>
+
+      <!-- PERSONAL INFORMATION -->
+      <section id="personalInfoCard" class="section-card">
+        <div class="section-head">
+          <div class="section-head-left">
+            <div class="section-icon"><i data-lucide="user" class="w-4 h-4"></i></div>
+            <h3 class="section-title">Personal Information</h3>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <div>
+            <label class="block text-[12.5px] font-semibold text-[#1a1d21] mb-1.5">First Name</label>
+            <div class="relative">
+              <i data-lucide="user" class="field-icon"></i>
+              <input id="firstName" type="text" disabled class="field-input" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[12.5px] font-semibold text-[#1a1d21] mb-1.5">Last Name</label>
+            <div class="relative">
+              <i data-lucide="user" class="field-icon"></i>
+              <input id="lastName" type="text" disabled class="field-input" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[12.5px] font-semibold text-[#1a1d21] mb-1.5">Mobile Number</label>
+            <div class="relative">
+              <i data-lucide="phone" class="field-icon"></i>
+              <input id="mobile" type="tel" disabled class="field-input" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[12.5px] font-semibold text-[#1a1d21] mb-1.5">Gender</label>
+            <div class="relative">
+              <i data-lucide="user" class="field-icon"></i>
+              <select id="gender" disabled class="field-input">
+                <option value="">—</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ACCOUNT INFORMATION -->
+      <section class="section-card">
+        <div class="section-head">
+          <div class="section-head-left">
+            <div class="section-icon"><i data-lucide="shield-check" class="w-4 h-4"></i></div>
+            <h3 class="section-title">Account Information</h3>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <!-- Username -->
+          <div>
+            <label class="block text-[12.5px] font-semibold text-[#1a1d21] mb-1.5">Username</label>
+            <div class="flex items-center gap-2">
+              <div class="relative flex-1">
+                <i data-lucide="at-sign" class="field-icon"></i>
+                <input id="username" type="text" disabled class="field-input" />
+              </div>
+              <button id="changeUsernameBtn" class="action-btn flex-shrink-0 h-[44px]">
+                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                <span class="hidden sm:inline">Change</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Password -->
+          <div>
+            <label class="block text-[12.5px] font-semibold text-[#1a1d21] mb-1.5">Password</label>
+            <div class="flex items-center gap-2">
+              <div class="relative flex-1">
+                <i data-lucide="lock" class="field-icon"></i>
+                <input type="password" value="••••••••" disabled class="field-input" />
+              </div>
+              <button id="changePasswordBtn" class="action-btn flex-shrink-0 h-[44px]">
+                <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                <span class="hidden sm:inline">Change</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Account Type -->
+          <div>
+            <label class="block text-[12.5px] font-semibold text-[#1a1d21] mb-1.5">Account Type</label>
+            <div class="flex items-center gap-2 px-3.5 py-2.5 bg-[#f9fafb] border border-gray-100 rounded-lg">
+              <i data-lucide="shield-check" class="w-4 h-4 text-[#E21B2D]"></i>
+              <span class="text-[13.5px] text-[#343A40] font-medium">Administrator</span>
+            </div>
+          </div>
+
+          <!-- Last Login -->
+          <div>
+            <label class="block text-[12.5px] font-semibold text-[#1a1d21] mb-1.5">Last Login</label>
+            <div class="flex items-center gap-2 px-3.5 py-2.5 bg-[#f9fafb] border border-gray-100 rounded-lg">
+              <i data-lucide="clock" class="w-4 h-4 text-[#9ca3af]"></i>
+              <span id="accLastLogin" class="text-[13px] text-[#343A40]">—</span>
+            </div>
+          </div>
+
+          <!-- Member Since -->
+          <div>
+            <label class="block text-[12.5px] font-semibold text-[#1a1d21] mb-1.5">Member Since</label>
+            <div class="flex items-center gap-2 px-3.5 py-2.5 bg-[#f9fafb] border border-gray-100 rounded-lg">
+              <i data-lucide="calendar" class="w-4 h-4 text-[#9ca3af]"></i>
+              <span id="accMemberSince" class="text-[13px] text-[#343A40]">—</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SAVE / CANCEL -->
+      <div id="saveSection" class="hidden flex flex-col sm:flex-row gap-3">
+        <button id="cancelBtn" class="flex-1 bg-gray-100 hover:bg-gray-200 text-[#343A40] font-semibold text-[14px] py-3.5 rounded-xl transition-all">
+          Cancel
+        </button>
+        <button id="saveBtn" class="flex-1 flex items-center justify-center gap-2 bg-[#E21B2D] hover:bg-[#c41525] text-white font-semibold text-[14px] py-3.5 rounded-xl shadow-md transition-all">
+          <i data-lucide="save" class="w-4 h-4"></i>
+          <span>Save Changes</span>
+        </button>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ═══ CHANGE USERNAME MODAL ═══ -->
+  <div id="usernameModal" class="hidden fixed inset-0 z-[150] items-center justify-center p-4">
+    <div id="usernameBackdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+    <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full">
+      <button id="usernameClose" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-4 h-4 text-[#343A40]"></i>
+      </button>
+
+      <div class="p-5 sm:p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-[#ffe5e8] flex items-center justify-center">
+            <i data-lucide="at-sign" class="w-5 h-5 text-[#E21B2D]"></i>
+          </div>
+          <div>
+            <h3 class="text-[16px] font-bold text-[#1a1d21]">Change Username</h3>
+            <p class="text-[11.5px] text-[#6b7280] mt-0.5">Enter your new username</p>
+          </div>
+        </div>
+
+        <form id="usernameForm" class="space-y-3.5">
+
+          <div>
+            <label class="block text-[12px] font-semibold text-[#1a1d21] mb-1.5">New Username <span class="text-red-500">*</span></label>
+            <div class="relative">
+              <i data-lucide="at-sign" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+              <input id="newUsername" type="text" maxlength="50" placeholder="Enter new username"
+                     class="w-full border border-gray-200 rounded-lg pl-10 pr-3.5 py-2.5 text-[13px] outline-none focus:border-[#E21B2D] focus:ring-3 focus:ring-[#E21B2D]/10" />
+            </div>
+            <p class="text-[10.5px] text-[#9ca3af] mt-1">Minimum 4 characters, no spaces</p>
+          </div>
+
+          <div>
+            <label class="block text-[12px] font-semibold text-[#1a1d21] mb-1.5">Current Password <span class="text-red-500">*</span></label>
+            <div class="relative">
+              <i data-lucide="lock" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+              <input id="usernamePassword" type="password" placeholder="Enter your current password"
+                     class="w-full border border-gray-200 rounded-lg pl-10 pr-10 py-2.5 text-[13px] outline-none focus:border-[#E21B2D] focus:ring-3 focus:ring-[#E21B2D]/10" />
+              <button type="button" id="toggleUsernamePassword" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#E21B2D] transition-colors">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-blue-50 border border-blue-100 rounded-lg px-3.5 py-2.5 flex items-start gap-2.5">
+            <i data-lucide="info" class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5"></i>
+            <p class="text-[11px] text-blue-800 leading-snug">Changing username will not affect your existing data or login credentials except the username itself.</p>
+          </div>
+
+          <div class="flex gap-3 pt-1">
+            <button type="button" id="usernameCancel" class="flex-1 bg-gray-100 hover:bg-gray-200 text-[#343A40] font-semibold text-[13px] py-2.5 rounded-lg transition-all">Cancel</button>
+            <button type="submit" id="usernameSubmitBtn" class="flex-1 flex items-center justify-center gap-2 bg-[#E21B2D] hover:bg-[#c41525] text-white font-semibold text-[13px] py-2.5 rounded-lg shadow-md transition-all">
+              <i data-lucide="check" class="w-4 h-4"></i>
+              <span>Update</span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CHANGE PASSWORD MODAL ═══ -->
+  <div id="passwordModal" class="hidden fixed inset-0 z-[150] items-center justify-center p-4">
+    <div id="passwordBackdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+    <div class="relative bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[92vh] overflow-y-auto">
+      <button id="passwordClose" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-4 h-4 text-[#343A40]"></i>
+      </button>
+
+      <div class="p-5 sm:p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-[#ffe5e8] flex items-center justify-center">
+            <i data-lucide="lock" class="w-5 h-5 text-[#E21B2D]"></i>
+          </div>
+          <div>
+            <h3 class="text-[16px] font-bold text-[#1a1d21]">Change Password</h3>
+            <p class="text-[11.5px] text-[#6b7280] mt-0.5">Keep your account secure</p>
+          </div>
+        </div>
+
+        <form id="passwordForm" class="space-y-3.5">
+
+          <div>
+            <label class="block text-[12px] font-semibold text-[#1a1d21] mb-1.5">Current Password <span class="text-red-500">*</span></label>
+            <div class="relative">
+              <i data-lucide="lock" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+              <input id="pwdCurrent" type="password" placeholder="Enter current password"
+                     class="w-full border border-gray-200 rounded-lg pl-10 pr-10 py-2.5 text-[13px] outline-none focus:border-[#E21B2D] focus:ring-3 focus:ring-[#E21B2D]/10" />
+              <button type="button" id="toggle_pwdCurrent" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#E21B2D] transition-colors">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[12px] font-semibold text-[#1a1d21] mb-1.5">New Password <span class="text-red-500">*</span></label>
+            <div class="relative">
+              <i data-lucide="lock" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+              <input id="pwdNew" type="password" placeholder="Enter new password"
+                     class="w-full border border-gray-200 rounded-lg pl-10 pr-10 py-2.5 text-[13px] outline-none focus:border-[#E21B2D] focus:ring-3 focus:ring-[#E21B2D]/10" />
+              <button type="button" id="toggle_pwdNew" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#E21B2D] transition-colors">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+            <div class="mt-2">
+              <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div id="pwdStrengthBar" class="h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+              </div>
+              <div id="pwdStrengthText" class="text-[10.5px] font-semibold mt-1"></div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[12px] font-semibold text-[#1a1d21] mb-1.5">Confirm New Password <span class="text-red-500">*</span></label>
+            <div class="relative">
+              <i data-lucide="lock" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+              <input id="pwdConfirm" type="password" placeholder="Re-enter new password"
+                     class="w-full border border-gray-200 rounded-lg pl-10 pr-10 py-2.5 text-[13px] outline-none focus:border-[#E21B2D] focus:ring-3 focus:ring-[#E21B2D]/10" />
+              <button type="button" id="toggle_pwdConfirm" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#E21B2D] transition-colors">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="bg-blue-50 border border-blue-100 rounded-lg px-3.5 py-2.5 flex items-start gap-2.5">
+            <i data-lucide="shield-check" class="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5"></i>
+            <p class="text-[11px] text-blue-800 leading-snug">Use a strong password with mix of letters, numbers and symbols. Minimum 6 characters.</p>
+          </div>
+
+          <div class="flex gap-3 pt-1">
+            <button type="button" id="passwordCancel" class="flex-1 bg-gray-100 hover:bg-gray-200 text-[#343A40] font-semibold text-[13px] py-2.5 rounded-lg transition-all">Cancel</button>
+            <button type="submit" id="passwordSubmitBtn" class="flex-1 flex items-center justify-center gap-2 bg-[#E21B2D] hover:bg-[#c41525] text-white font-semibold text-[13px] py-2.5 rounded-lg shadow-md transition-all">
+              <i data-lucide="check" class="w-4 h-4"></i>
+              <span>Update</span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/guard.js"></script>
+  <script src="../js/admin-profile.js"></script>
+  <script>lucide.createIcons();</script>
+
+</body>
+</html>

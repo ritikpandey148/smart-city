@@ -136,6 +136,46 @@ const getDashboardStats = async () => {
 
 const getActivityLogs = async (limit) => adminModel.getActivityLogs(limit);
 
+// ═══ SEND MESSAGE TO INDIVIDUAL USER ═══
+const sendUserMessage = async (adminId, data) => {
+  const { user_id, title, message } = data;
+
+  if (!user_id) throw { status: 400, message: 'User ID is required' };
+  if (!title || title.trim().length < 3) {
+    throw { status: 400, message: 'Title must be at least 3 characters' };
+  }
+  if (!message || message.trim().length < 5) {
+    throw { status: 400, message: 'Message must be at least 5 characters' };
+  }
+
+  // Verify user exists
+  const user = await adminModel.getUserDetail(user_id);
+  if (!user) throw { status: 404, message: 'User not found' };
+
+  // Send notification (specific to this user)
+  const notificationModel = require('../models/notification.model');
+  const id = await notificationModel.create({
+    title: title.trim(),
+    message: message.trim(),
+    sender_id: adminId,
+    sender_role: 'admin',
+    target_type: 'specific',
+    target_user_id: user_id,
+    complaint_id: null,
+    category: 'message'
+  });
+
+  // Activity log
+  const db = require('../db');
+  await db.query(
+    `INSERT INTO activity_logs (user_id, user_role, action, description, ip_address)
+     VALUES (?, 'admin', 'user_message_sent', ?, NULL)`,
+    [adminId, `Sent message to user #${user_id}: "${title.trim().substring(0, 80)}"`]
+  );
+
+  return { id, user_id, title: title.trim(), message: message.trim() };
+};
+
 module.exports = {
   getAllComplaints,
   getComplaintDetail,
@@ -146,5 +186,6 @@ module.exports = {
   getAllProviders,
   toggleProviderStatus,
   getDashboardStats,
-  getActivityLogs
+  getActivityLogs,
+  sendUserMessage   // ⬅️ add karo
 };

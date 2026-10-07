@@ -184,4 +184,45 @@ const changePassword = async (userId, currentPassword, newPassword) => {
   return { success: true };
 };
 
-module.exports = { registerCitizen, login, getMe, updateProfile, changePassword };
+// ============ CHANGE USERNAME ============
+const changeUsername = async (userId, currentPassword, newUsername) => {
+  if (!currentPassword || !newUsername) {
+    throw { status: 400, message: 'Current password and new username are required' };
+  }
+  if (newUsername.length < 4) {
+    throw { status: 400, message: 'Username must be at least 4 characters' };
+  }
+  if (/\s/.test(newUsername)) {
+    throw { status: 400, message: 'Username cannot contain spaces' };
+  }
+
+  const user = await userModel.findByIdWithHash(userId);
+  if (!user) throw { status: 404, message: 'User not found' };
+
+  // Verify password
+  const isMatch = await comparePassword(currentPassword, user.password_hash);
+  if (!isMatch) throw { status: 401, message: 'Current password is incorrect' };
+
+  // Check if same as old
+  if (user.username.toLowerCase() === newUsername.toLowerCase()) {
+    throw { status: 400, message: 'New username is same as current username' };
+  }
+
+  // Check uniqueness across users + providers
+  const existingUser = await userModel.findByUsername(newUsername);
+  if (existingUser && existingUser.id !== userId) {
+    throw { status: 409, message: 'Username is already taken' };
+  }
+  const existingProvider = await providerModel.findByUsername(newUsername);
+  if (existingProvider) {
+    throw { status: 409, message: 'Username is already taken' };
+  }
+
+  // Update
+  const db = require('../db');
+  await db.query('UPDATE users SET username = ? WHERE id = ?', [newUsername, userId]);
+
+  return await userModel.findById(userId);
+};
+
+module.exports = { registerCitizen, login, getMe, updateProfile, changePassword, changeUsername };

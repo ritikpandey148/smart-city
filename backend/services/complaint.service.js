@@ -1,5 +1,6 @@
 // backend/services/complaint.service.js
 const complaintModel = require('../models/complaint.model');
+const notificationModel = require('../models/notification.model');
 const { COMPLAINT_CATEGORY, OBSERVATION, LOCALITIES, PINCODES } = require('../config/constants');
 
 const VALID_CATEGORIES = Object.values(COMPLAINT_CATEGORY);
