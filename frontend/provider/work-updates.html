@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Work Updates — myBMC</title>
+
+  <link rel="icon" type="image/png" href="../assets/images/smart-city-logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    body { margin: 0; background: #f0f1f3; }
+
+    .spinner, .spinner-sm {
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    .spinner { width: 20px; height: 20px; }
+    .spinner-sm { width: 14px; height: 14px; border-width: 2px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #providerSidebar { background: #1a1d21; }
+    .side-link {
+      display: flex; align-items: center; gap: 14px;
+      padding: 11px 18px; border-radius: 10px;
+      font-size: 13.5px; font-weight: 500;
+      color: #cbd0d6; margin-bottom: 2px;
+      transition: all 0.2s ease;
+    }
+    .side-link:hover:not(.active) { background: rgba(255,255,255,0.05); color: #fff; }
+    .side-link.active { background: #E21B2D; color: #fff; box-shadow: 0 8px 20px -6px rgba(226,27,45,0.55); }
+
+    .stat-card {
+      transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 15px 30px -12px rgba(0,0,0,0.18); }
+
+    #mobileDrawer { transition: transform 0.3s ease-out; }
+
+    .chart-wrap { position: relative; height: 260px; }
+
+    ::selection { background: #E21B2D; color: white; }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside id="providerSidebar" class="hidden lg:flex fixed left-0 top-0 bottom-0 w-[230px] flex-col z-30">
+    <div class="px-5 pt-6 pb-5">
+      <div class="flex items-center gap-2.5">
+        <img src="../assets/images/smart-city-logo.png" class="w-11 h-11 object-contain bg-white rounded-full p-0.5" />
+        <div>
+          <div class="text-[13px] font-bold leading-tight text-white">SMART <span class="text-[#E21B2D]">CITY</span></div>
+          <div class="text-[9.5px] text-gray-400 leading-tight mt-0.5">Smart Citizen, Smart City</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="flex-1 px-3 overflow-y-auto pb-4">
+      <a href="dashboard.html" class="side-link"><i data-lucide="home" class="w-[17px] h-[17px]"></i><span>Dashboard</span></a>
+      <a href="reports.html" class="side-link"><i data-lucide="clipboard-list" class="w-[17px] h-[17px]"></i><span>Assigned Reports</span></a>
+      <a href="garbage-reports.html" class="side-link"><i data-lucide="trash-2" class="w-[17px] h-[17px]"></i><span>Garbage Reports</span></a>
+      <a href="pothole-reports.html" class="side-link"><i data-lucide="construction" class="w-[17px] h-[17px]"></i><span>Pothole Reports</span></a>
+      <a href="other-reports.html" class="side-link"><i data-lucide="layout-grid" class="w-[17px] h-[17px]"></i><span>Others Reports</span></a>
+      <a href="users.html" class="side-link"><i data-lucide="users" class="w-[17px] h-[17px]"></i><span>Users</span></a>
+      <a href="admin.html" class="side-link"><i data-lucide="shield-check" class="w-[17px] h-[17px]"></i><span>Admin</span></a>
+      <a href="notifications.html" class="side-link"><i data-lucide="bell" class="w-[17px] h-[17px]"></i><span>Notifications</span></a>
+      <a href="work-updates.html" class="side-link active"><i data-lucide="activity" class="w-[17px] h-[17px]"></i><span>My Work Updates</span></a>
+      <div class="h-px bg-white/10 my-3"></div>
+      <a href="profile.html" class="side-link"><i data-lucide="user" class="w-[17px] h-[17px]"></i><span>Profile</span></a>
+      <button data-logout class="side-link w-full text-left hover:bg-red-500/10"><i data-lucide="log-out" class="w-[17px] h-[17px]"></i><span>Logout</span></button>
+    </nav>
+  </aside>
+
+  <!-- MOBILE DRAWER -->
+  <div id="drawerBackdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"></div>
+  <aside id="mobileDrawer" class="fixed left-0 top-0 bottom-0 w-[250px] bg-[#1a1d21] z-50 flex flex-col shadow-2xl" style="transform: translateX(-100%);">
+    <div class="px-5 pt-5 pb-4 flex items-center justify-between border-b border-white/10">
+      <div class="flex items-center gap-2">
+        <img src="../assets/images/smart-city-logo.png" class="w-9 h-9 object-contain bg-white rounded-full p-0.5" />
+        <span class="text-[13px] font-bold text-white">SMART <span class="text-[#E21B2D]">CITY</span></span>
+      </div>
+      <button id="drawerClose" class="p-1.5 hover:bg-white/10 rounded-lg"><i data-lucide="x" class="w-5 h-5 text-white"></i></button>
+    </div>
+    <nav class="flex-1 px-3 py-3 overflow-y-auto">
+      <a href="dashboard.html" class="side-link"><i data-lucide="home" class="w-[17px] h-[17px]"></i><span>Dashboard</span></a>
+      <a href="reports.html" class="side-link"><i data-lucide="clipboard-list" class="w-[17px] h-[17px]"></i><span>Assigned Reports</span></a>
+      <a href="garbage-reports.html" class="side-link"><i data-lucide="trash-2" class="w-[17px] h-[17px]"></i><span>Garbage Reports</span></a>
+      <a href="pothole-reports.html" class="side-link"><i data-lucide="construction" class="w-[17px] h-[17px]"></i><span>Pothole Reports</span></a>
+      <a href="other-reports.html" class="side-link"><i data-lucide="layout-grid" class="w-[17px] h-[17px]"></i><span>Others Reports</span></a>
+      <a href="users.html" class="side-link"><i data-lucide="users" class="w-[17px] h-[17px]"></i><span>Users</span></a>
+      <a href="admin.html" class="side-link"><i data-lucide="shield-check" class="w-[17px] h-[17px]"></i><span>Admin</span></a>
+      <a href="notifications.html" class="side-link"><i data-lucide="bell" class="w-[17px] h-[17px]"></i><span>Notifications</span></a>
+      <a href="work-updates.html" class="side-link active"><i data-lucide="activity" class="w-[17px] h-[17px]"></i><span>My Work Updates</span></a>
+      <a href="profile.html" class="side-link"><i data-lucide="user" class="w-[17px] h-[17px]"></i><span>Profile</span></a>
+      <button data-logout class="side-link w-full text-left"><i data-lucide="log-out" class="w-[17px] h-[17px]"></i><span>Logout</span></button>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="lg:ml-[230px] min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-20 bg-white border-b border-gray-100">
+      <div class="px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <button id="menuToggle" class="lg:hidden p-2 hover:bg-gray-100 rounded-lg flex-shrink-0">
+            <i data-lucide="menu" class="w-5 h-5 text-[#343A40]"></i>
+          </button>
+          <div class="min-w-0">
+            <h1 class="text-[16px] sm:text-[19px] font-bold text-[#1a1d21] leading-tight">My Work Updates</h1>
+            <p class="text-[11.5px] text-[#6b7280] leading-tight truncate">Track your performance and update complaint status</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <div class="hidden sm:flex items-center gap-2 pl-3">
+            <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm border border-gray-200">
+              <img src="../assets/images/bmc-logo.png" alt="" class="w-full h-full object-contain p-0.5" onerror="this.style.display='none'" />
+            </div>
+            <div class="text-left">
+              <div class="text-[12px] font-bold text-[#1a1d21] leading-tight">myBMC</div>
+              <div class="text-[10px] text-[#6b7280] leading-tight">Service Provider</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="flex-1 p-4 sm:p-6 space-y-5 max-w-7xl mx-auto w-full">
+
+      <!-- Back -->
+      <button id="backBtn" class="flex items-center gap-2 bg-white hover:bg-gray-50 text-[#343A40] hover:text-[#E21B2D] text-[13px] font-medium px-4 py-2.5 rounded-full shadow-sm hover:shadow-md transition-all">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        <span>Back to Dashboard</span>
+      </button>
+
+      <!-- STAT CARDS -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+        <div class="stat-card bg-[#ffe5e8] rounded-2xl p-4 border border-[#fdd]">
+          <div class="flex items-center justify-between mb-2">
+            <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center">
+              <i data-lucide="clipboard-list" class="w-5 h-5 text-[#E21B2D]"></i>
+            </div>
+            <i data-lucide="trending-up" class="w-4 h-4 text-[#E21B2D]"></i>
+          </div>
+          <div id="stTotal" class="text-[26px] font-bold text-[#1a1d21] leading-none">0</div>
+          <div class="text-[11.5px] text-[#6b7280] mt-1">Total Reports</div>
+        </div>
+
+        <div class="stat-card bg-green-50 rounded-2xl p-4 border border-green-100">
+          <div class="flex items-center justify-between mb-2">
+            <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center">
+              <i data-lucide="check-circle-2" class="w-5 h-5 text-green-600"></i>
+            </div>
+            <span id="stResolvedToday" class="text-[10px] font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">+0 today</span>
+          </div>
+          <div id="stResolved" class="text-[26px] font-bold text-[#1a1d21] leading-none">0</div>
+          <div class="text-[11.5px] text-[#6b7280] mt-1">Resolved</div>
+        </div>
+
+        <div class="stat-card bg-orange-50 rounded-2xl p-4 border border-orange-100">
+          <div class="flex items-center justify-between mb-2">
+            <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center">
+              <i data-lucide="loader" class="w-5 h-5 text-orange-600"></i>
+            </div>
+          </div>
+          <div id="stProgress" class="text-[26px] font-bold text-[#1a1d21] leading-none">0</div>
+          <div class="text-[11.5px] text-[#6b7280] mt-1">In Progress</div>
+        </div>
+
+        <div class="stat-card bg-amber-50 rounded-2xl p-4 border border-amber-100">
+          <div class="flex items-center justify-between mb-2">
+            <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center">
+              <i data-lucide="eye" class="w-5 h-5 text-amber-600"></i>
+            </div>
+          </div>
+          <div id="stReview" class="text-[26px] font-bold text-[#1a1d21] leading-none">0</div>
+          <div class="text-[11.5px] text-[#6b7280] mt-1">In Review</div>
+        </div>
+
+      </div>
+
+      <!-- SMALL STAT CARDS -->
+      <div class="grid grid-cols-3 gap-3">
+
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="sun" class="w-5 h-5 text-blue-600"></i>
+          </div>
+          <div>
+            <div id="stToday" class="text-[20px] font-bold text-[#1a1d21] leading-none">0</div>
+            <div class="text-[10.5px] text-[#6b7280] mt-1">Updated Today</div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="calendar-days" class="w-5 h-5 text-purple-600"></i>
+          </div>
+          <div>
+            <div id="st7Days" class="text-[20px] font-bold text-[#1a1d21] leading-none">0</div>
+            <div class="text-[10.5px] text-[#6b7280] mt-1">Last 7 Days</div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-4 border border-gray-100 flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
+            <i data-lucide="calendar" class="w-5 h-5 text-[#343A40]"></i>
+          </div>
+          <div>
+            <div id="st30Days" class="text-[20px] font-bold text-[#1a1d21] leading-none">0</div>
+            <div class="text-[10.5px] text-[#6b7280] mt-1">Last 30 Days</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CHARTS ROW -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+        <!-- Pie Chart: Category Distribution -->
+        <div class="bg-white rounded-2xl p-5 border border-gray-100">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-[#ffe5e8] flex items-center justify-center">
+              <i data-lucide="pie-chart" class="w-4 h-4 text-[#E21B2D]"></i>
+            </div>
+            <h3 class="text-[14.5px] font-bold text-[#1a1d21]">Reports by Category</h3>
+          </div>
+
+          <div class="grid grid-cols-[1fr_auto] gap-4 items-center">
+            <div class="relative" style="height: 220px;">
+              <canvas id="pieChart"></canvas>
+            </div>
+            <div id="pieLegend" class="space-y-2 min-w-[150px]"></div>
+          </div>
+        </div>
+
+        <!-- Bar Chart: Last 7 Days Activity -->
+        <div class="bg-white rounded-2xl p-5 border border-gray-100">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 rounded-lg bg-[#ffe5e8] flex items-center justify-center">
+              <i data-lucide="bar-chart-3" class="w-4 h-4 text-[#E21B2D]"></i>
+            </div>
+            <h3 class="text-[14.5px] font-bold text-[#1a1d21]">Activity — Last 7 Days</h3>
+          </div>
+          <div class="chart-wrap"><canvas id="barChart"></canvas></div>
+        </div>
+
+      </div>
+
+      <!-- STATUS UPDATE FORM -->
+      <div class="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 rounded-xl bg-[#ffe5e8] flex items-center justify-center">
+            <i data-lucide="refresh-cw" class="w-5 h-5 text-[#E21B2D]"></i>
+          </div>
+          <div>
+            <h2 class="text-[16px] font-bold text-[#1a1d21]">Quick Status Update</h2>
+            <p class="text-[11.5px] text-[#6b7280] mt-0.5">Enter a Complaint ID to update its status and notify the user</p>
+          </div>
+        </div>
+
+        <form id="lookupForm" class="mb-5">
+          <label class="block text-[12.5px] font-semibold text-[#1a1d21] mb-2">Enter or Paste Complaint ID</label>
+          <div class="flex flex-col sm:flex-row gap-3">
+            <div class="flex-1 relative">
+              <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"></i>
+              <input id="complaintIdInput" type="text" placeholder="e.g. SC-2026-0001"
+                     class="w-full border border-gray-200 rounded-xl pl-11 pr-4 py-3 text-[13.5px] font-mono uppercase tracking-wider outline-none transition-all focus:border-[#E21B2D] focus:ring-4 focus:ring-[#E21B2D]/10" />
+            </div>
+            <button type="submit" id="lookupBtn"
+                    class="flex items-center justify-center gap-2 bg-[#E21B2D] hover:bg-[#c41525] text-white font-semibold text-[13.5px] px-6 py-3 rounded-xl shadow-md transition-all whitespace-nowrap">
+              <i data-lucide="search" class="w-4 h-4"></i>
+              <span>Lookup Complaint</span>
+            </button>
+          </div>
+          <p id="lookupError" class="hidden mt-2 text-[11.5px] text-red-600 font-medium"></p>
+        </form>
+
+        <!-- Complaint Preview -->
+        <div id="complaintPreview" class="hidden p-4 bg-[#f9fafb] border border-gray-100 rounded-xl mb-5"></div>
+
+        <!-- Update Form -->
+        <div id="updateFormWrap" class="hidden p-5 bg-[#fff5f6] border border-[#fdd] rounded-xl">
+          <div class="text-[13px] font-bold text-[#1a1d21] mb-3">Update Complaint Status</div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block text-[11.5px] font-semibold text-[#1a1d21] mb-1.5">New Status</label>
+              <select id="newStatus"
+                      class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-[13px] bg-white outline-none focus:border-[#E21B2D] focus:ring-3 focus:ring-[#E21B2D]/10 cursor-pointer">
+                <option value="submitted">Submitted</option>
+                <option value="in_review">In Review</option>
+                <option value="in_progress">In Progress</option>
+                <option value="resolved">Resolved</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[11.5px] font-semibold text-[#1a1d21] mb-1.5">Remarks <span class="text-[#9ca3af] font-normal">(Optional)</span></label>
+              <textarea id="updateRemarks" rows="2" maxlength="255" placeholder="e.g. Work completed and verified"
+                        class="w-full border border-gray-200 rounded-lg px-3.5 py-2.5 text-[13px] outline-none focus:border-[#E21B2D] focus:ring-3 focus:ring-[#E21B2D]/10 resize-none"></textarea>
+            </div>
+
+            <div class="bg-white border border-[#fdd] rounded-lg px-3.5 py-2.5 flex items-start gap-2.5">
+              <i data-lucide="bell" class="w-4 h-4 text-[#E21B2D] flex-shrink-0 mt-0.5"></i>
+              <p class="text-[11px] text-[#6b7280] leading-snug">
+                The citizen will receive a notification about this status change, and it will also update on their <strong>Track Status</strong> page.
+              </p>
+            </div>
+
+            <p id="updateError" class="hidden text-[11.5px] text-red-600 font-medium"></p>
+
+            <div class="flex flex-col sm:flex-row gap-3 pt-1">
+              <button type="button" id="resetBtn"
+                      class="flex-1 bg-white hover:bg-gray-50 border border-gray-200 text-[#343A40] font-semibold text-[13px] py-3 rounded-lg transition-all">
+                Reset
+              </button>
+              <button type="button" id="updateStatusBtn"
+                      class="flex-1 flex items-center justify-center gap-2 bg-[#E21B2D] hover:bg-[#c41525] text-white font-semibold text-[13px] py-3 rounded-lg shadow-md transition-all">
+                <i data-lucide="check" class="w-4 h-4"></i>
+                <span>Update Status & Notify User</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT UPDATES -->
+      <div class="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100">
+        <div class="flex items-center gap-3 mb-5">
+          <div class="w-10 h-10 rounded-xl bg-[#ffe5e8] flex items-center justify-center">
+            <i data-lucide="activity" class="w-5 h-5 text-[#E21B2D]"></i>
+          </div>
+          <h2 class="text-[16px] font-bold text-[#1a1d21]">Recent Work Updates</h2>
+        </div>
+        <div id="recentUpdatesList" class="space-y-3"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/guard.js"></script>
+  <script src="../js/provider-work-updates.js"></script>
+  <script>lucide.createIcons();</script>
+
+</body>
+</html>

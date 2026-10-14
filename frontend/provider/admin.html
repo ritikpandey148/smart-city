@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — myBMC</title>
+
+  <link rel="icon" type="image/png" href="../assets/images/smart-city-logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    body { margin: 0; background: #f0f1f3; }
+
+    .spinner, .spinner-sm {
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    .spinner { width: 20px; height: 20px; }
+    .spinner-sm { width: 14px; height: 14px; border-width: 2px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #providerSidebar { background: #1a1d21; }
+    .side-link {
+      display: flex; align-items: center; gap: 14px;
+      padding: 11px 18px; border-radius: 10px;
+      font-size: 13.5px; font-weight: 500;
+      color: #cbd0d6; margin-bottom: 2px;
+      transition: all 0.2s ease;
+    }
+    .side-link:hover:not(.active) { background: rgba(255,255,255,0.05); color: #fff; }
+    .side-link.active { background: #E21B2D; color: #fff; box-shadow: 0 8px 20px -6px rgba(226,27,45,0.55); }
+
+    #mobileDrawer { transition: transform 0.3s ease-out; }
+
+    .chat-scroll::-webkit-scrollbar { width: 6px; }
+    .chat-scroll::-webkit-scrollbar-thumb { background: #cbd0d6; border-radius: 10px; }
+    .chat-scroll::-webkit-scrollbar-track { background: transparent; }
+
+    ::selection { background: #E21B2D; color: white; }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside id="providerSidebar" class="hidden lg:flex fixed left-0 top-0 bottom-0 w-[230px] flex-col z-30">
+    <div class="px-5 pt-6 pb-5">
+      <div class="flex items-center gap-2.5">
+        <img src="../assets/images/smart-city-logo.png" class="w-11 h-11 object-contain bg-white rounded-full p-0.5" />
+        <div>
+          <div class="text-[13px] font-bold leading-tight text-white">SMART <span class="text-[#E21B2D]">CITY</span></div>
+          <div class="text-[9.5px] text-gray-400 leading-tight mt-0.5">Smart Citizen, Smart City</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="flex-1 px-3 overflow-y-auto pb-4">
+      <a href="dashboard.html" class="side-link"><i data-lucide="home" class="w-[17px] h-[17px]"></i><span>Dashboard</span></a>
+      <a href="reports.html" class="side-link"><i data-lucide="clipboard-list" class="w-[17px] h-[17px]"></i><span>Assigned Reports</span></a>
+      <a href="garbage-reports.html" class="side-link"><i data-lucide="trash-2" class="w-[17px] h-[17px]"></i><span>Garbage Reports</span></a>
+      <a href="pothole-reports.html" class="side-link"><i data-lucide="construction" class="w-[17px] h-[17px]"></i><span>Pothole Reports</span></a>
+      <a href="other-reports.html" class="side-link"><i data-lucide="layout-grid" class="w-[17px] h-[17px]"></i><span>Others Reports</span></a>
+      <a href="users.html" class="side-link"><i data-lucide="users" class="w-[17px] h-[17px]"></i><span>Users</span></a>
+      <a href="admin.html" class="side-link active"><i data-lucide="shield-check" class="w-[17px] h-[17px]"></i><span>Admin</span></a>
+      <a href="notifications.html" class="side-link"><i data-lucide="bell" class="w-[17px] h-[17px]"></i><span>Notifications</span></a>
+      <a href="work-updates.html" class="side-link"><i data-lucide="activity" class="w-[17px] h-[17px]"></i><span>My Work Updates</span></a>
+      <div class="h-px bg-white/10 my-3"></div>
+      <a href="profile.html" class="side-link"><i data-lucide="user" class="w-[17px] h-[17px]"></i><span>Profile</span></a>
+      <button data-logout class="side-link w-full text-left hover:bg-red-500/10"><i data-lucide="log-out" class="w-[17px] h-[17px]"></i><span>Logout</span></button>
+    </nav>
+  </aside>
+
+  <!-- MOBILE DRAWER -->
+  <div id="drawerBackdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"></div>
+  <aside id="mobileDrawer" class="fixed left-0 top-0 bottom-0 w-[250px] bg-[#1a1d21] z-50 flex flex-col shadow-2xl" style="transform: translateX(-100%);">
+    <div class="px-5 pt-5 pb-4 flex items-center justify-between border-b border-white/10">
+      <div class="flex items-center gap-2">
+        <img src="../assets/images/smart-city-logo.png" class="w-9 h-9 object-contain bg-white rounded-full p-0.5" />
+        <span class="text-[13px] font-bold text-white">SMART <span class="text-[#E21B2D]">CITY</span></span>
+      </div>
+      <button id="drawerClose" class="p-1.5 hover:bg-white/10 rounded-lg"><i data-lucide="x" class="w-5 h-5 text-white"></i></button>
+    </div>
+    <nav class="flex-1 px-3 py-3 overflow-y-auto">
+      <a href="dashboard.html" class="side-link"><i data-lucide="home" class="w-[17px] h-[17px]"></i><span>Dashboard</span></a>
+      <a href="reports.html" class="side-link"><i data-lucide="clipboard-list" class="w-[17px] h-[17px]"></i><span>Assigned Reports</span></a>
+      <a href="garbage-reports.html" class="side-link"><i data-lucide="trash-2" class="w-[17px] h-[17px]"></i><span>Garbage Reports</span></a>
+      <a href="pothole-reports.html" class="side-link"><i data-lucide="construction" class="w-[17px] h-[17px]"></i><span>Pothole Reports</span></a>
+      <a href="other-reports.html" class="side-link"><i data-lucide="layout-grid" class="w-[17px] h-[17px]"></i><span>Others Reports</span></a>
+      <a href="users.html" class="side-link"><i data-lucide="users" class="w-[17px] h-[17px]"></i><span>Users</span></a>
+      <a href="admin.html" class="side-link active"><i data-lucide="shield-check" class="w-[17px] h-[17px]"></i><span>Admin</span></a>
+      <a href="notifications.html" class="side-link"><i data-lucide="bell" class="w-[17px] h-[17px]"></i><span>Notifications</span></a>
+      <a href="work-updates.html" class="side-link"><i data-lucide="activity" class="w-[17px] h-[17px]"></i><span>My Work Updates</span></a>
+      <a href="profile.html" class="side-link"><i data-lucide="user" class="w-[17px] h-[17px]"></i><span>Profile</span></a>
+      <button data-logout class="side-link w-full text-left"><i data-lucide="log-out" class="w-[17px] h-[17px]"></i><span>Logout</span></button>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="lg:ml-[230px] min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-20 bg-white border-b border-gray-100">
+      <div class="px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <button id="menuToggle" class="lg:hidden p-2 hover:bg-gray-100 rounded-lg flex-shrink-0">
+            <i data-lucide="menu" class="w-5 h-5 text-[#343A40]"></i>
+          </button>
+          <div class="min-w-0">
+            <h1 class="text-[16px] sm:text-[19px] font-bold text-[#1a1d21] leading-tight">Admin (BMC)</h1>
+            <p class="text-[11.5px] text-[#6b7280] leading-tight truncate">View admin info, chat and status change history</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <div class="hidden sm:flex items-center gap-2 pl-3">
+            <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm border border-gray-200">
+              <img src="../assets/images/bmc-logo.png" alt="" class="w-full h-full object-contain p-0.5" onerror="this.style.display='none'" />
+            </div>
+            <div class="text-left">
+              <div class="text-[12px] font-bold text-[#1a1d21] leading-tight">myBMC</div>
+              <div class="text-[10px] text-[#6b7280] leading-tight">Service Provider</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="flex-1 p-4 sm:p-6 space-y-5 max-w-6xl mx-auto w-full">
+
+      <!-- HERO -->
+      <section class="relative rounded-2xl overflow-hidden bg-[#fde8ea] shadow-sm">
+        <div class="absolute inset-0">
+          <img src="../assets/images/help-hero.jpg" alt="" class="w-full h-full object-cover opacity-55" onerror="this.style.display='none'" />
+        </div>
+        <div class="relative z-10 px-6 sm:px-10 py-8 sm:py-10 max-w-2xl">
+          <h1 class="text-[32px] sm:text-[42px] font-bold leading-tight">
+            <span class="text-[#343A40]">BMC </span><span class="text-[#E21B2D]">Admin</span>
+          </h1>
+          <p class="text-[13px] sm:text-[15px] text-[#4a5057] mt-3 leading-snug max-w-lg">
+            Communicate with BMC Admin and view status changes made by them.
+          </p>
+        </div>
+      </section>
+
+      <!-- ADMIN CARD + CHAT -->
+      <section class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-5">
+
+        <!-- LEFT: Admin info card -->
+        <div class="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100">
+
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-9 h-9 rounded-lg bg-[#ffe5e8] flex items-center justify-center">
+              <i data-lucide="shield-check" class="w-4 h-4 text-[#E21B2D]"></i>
+            </div>
+            <h2 class="text-[16px] font-bold text-[#1a1d21]">Administrator Information</h2>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-start gap-5">
+
+            <!-- Avatar -->
+            <div class="relative flex-shrink-0">
+              <div class="w-20 h-20 rounded-full bg-[#E21B2D] flex items-center justify-center text-white font-bold text-[28px] shadow-lg">
+                <span id="adminAvatar">A</span>
+              </div>
+              <div class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-green-500 border-3 border-white flex items-center justify-center">
+                <i data-lucide="check" class="w-3.5 h-3.5 text-white" stroke-width="3"></i>
+              </div>
+            </div>
+
+            <!-- Details -->
+            <div class="flex-1 min-w-0">
+              <h3 id="adminName" class="text-[20px] font-bold text-[#1a1d21] leading-tight">Admin</h3>
+              <div class="text-[12px] text-[#6b7280] mt-1" id="adminUsername">@—</div>
+
+              <div class="mt-3" id="adminOnlineStatus">
+                <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-gray-400">
+                  <span class="w-2 h-2 rounded-full bg-gray-400"></span> Checking...
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 pt-4 border-t border-gray-100">
+                <div>
+                  <div class="text-[10.5px] uppercase tracking-wide font-semibold text-[#9ca3af] mb-0.5">Role</div>
+                  <div class="text-[12.5px] text-[#343A40] font-medium">Administrator</div>
+                </div>
+                <div>
+                  <div class="text-[10.5px] uppercase tracking-wide font-semibold text-[#9ca3af] mb-0.5">Organization</div>
+                  <div class="text-[12.5px] text-[#343A40] font-medium">Brihanmumbai Municipal Corporation</div>
+                </div>
+                <div>
+                  <div class="text-[10.5px] uppercase tracking-wide font-semibold text-[#9ca3af] mb-0.5">Contact</div>
+                  <div class="text-[12.5px] text-[#343A40] font-medium" id="adminMobile">—</div>
+                </div>
+                <div>
+                  <div class="text-[10.5px] uppercase tracking-wide font-semibold text-[#9ca3af] mb-0.5">Access Level</div>
+                  <div class="text-[12.5px] text-[#E21B2D] font-bold">Full System Access</div>
+                </div>
+              </div>
+
+              <!-- Live Chat button -->
+              <button id="openChatBtn" class="mt-5 flex items-center justify-center gap-2 bg-[#E21B2D] hover:bg-[#c41525] text-white font-semibold text-[13.5px] px-6 py-3 rounded-xl shadow-md transition-all relative">
+                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                <span>Start Live Chat</span>
+                <span id="chatUnreadBadge" class="hidden absolute -top-1 -right-1 min-w-[20px] h-5 px-1 rounded-full bg-[#343A40] text-white text-[10px] font-bold flex items-center justify-center border-2 border-white">0</span>
+              </button>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: Chat preview -->
+        <div class="bg-white rounded-2xl p-5 border border-gray-100 flex flex-col">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-[#ffe5e8] flex items-center justify-center">
+                <i data-lucide="message-circle" class="w-4 h-4 text-[#E21B2D]"></i>
+              </div>
+              <h3 class="text-[14px] font-bold text-[#1a1d21]">Live Chat with Admin</h3>
+            </div>
+          </div>
+
+          <div id="openChatSmallBtn" class="flex-1 flex flex-col bg-[#f9fafb] rounded-xl p-4 mb-3 cursor-pointer hover:bg-[#f0f1f3] transition-colors min-h-[180px]">
+            <div class="flex items-start gap-3">
+              <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center flex-shrink-0 border border-gray-200">
+                <img src="../assets/images/bmc-logo.png" class="w-full h-full object-contain rounded-full p-0.5" onerror="this.style.display='none'" />
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[12.5px] font-semibold text-[#1a1d21]">BMC Admin</div>
+                <div class="mt-1.5 text-[12.5px] text-[#6b7280] leading-snug" id="chatPreviewText">
+                  Loading...
+                </div>
+                <div id="chatPreviewTime" class="text-[10.5px] text-[#9ca3af] mt-2"></div>
+              </div>
+            </div>
+          </div>
+
+          <button id="openChatSmallBtn2" class="w-full flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3.5 py-2.5 hover:border-[#E21B2D] transition-colors text-left" onclick="ProviderAdmin.openChat()">
+            <span class="text-[12.5px] text-[#9ca3af] flex-1">Open chat...</span>
+            <span class="w-8 h-8 rounded-full bg-[#E21B2D] flex items-center justify-center">
+              <i data-lucide="message-circle" class="w-3.5 h-3.5 text-white"></i>
+            </span>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- ADMIN ACTIVITY — Status Changes -->
+      <section class="bg-white rounded-2xl p-5 sm:p-6 border border-gray-100">
+        <div class="flex items-center gap-3 mb-5 flex-wrap">
+          <div class="w-9 h-9 rounded-lg bg-[#ffe5e8] flex items-center justify-center">
+            <i data-lucide="activity" class="w-4 h-4 text-[#E21B2D]"></i>
+          </div>
+          <h2 class="text-[16px] font-bold text-[#1a1d21]">Admin's Status Change History</h2>
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-[#ffe5e8] text-[11px] font-bold text-[#E21B2D]">
+            <span id="activityCount">0</span> updates
+          </span>
+        </div>
+        <p class="text-[12px] text-[#6b7280] -mt-3 mb-4 ml-12">Recent complaint status changes made by the BMC Admin</p>
+
+        <div id="activityList" class="space-y-3"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ═══ FULL CHAT MODAL ═══ -->
+  <div id="chatModal" class="hidden fixed inset-0 z-[150] items-center justify-center p-3 sm:p-6">
+    <div id="chatModalBackdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+
+    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl h-[92vh] max-h-[720px] flex flex-col overflow-hidden">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between gap-3 px-5 py-4 border-b border-gray-100 bg-white flex-shrink-0">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-11 h-11 rounded-full bg-white flex items-center justify-center border border-gray-200 flex-shrink-0">
+            <img src="../assets/images/bmc-logo.png" class="w-full h-full object-contain rounded-full p-1" onerror="this.style.display='none'" />
+          </div>
+          <div class="min-w-0">
+            <div class="text-[14.5px] font-bold text-[#1a1d21] truncate">BMC Admin</div>
+            <div id="chatHeaderStatus" class="mt-0.5">
+              <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-gray-400">
+                <span class="w-2 h-2 rounded-full bg-gray-400"></span> Loading...
+              </span>
+            </div>
+          </div>
+        </div>
+        <button id="closeChatBtn" class="w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors flex-shrink-0">
+          <i data-lucide="x" class="w-4 h-4 text-[#343A40]"></i>
+        </button>
+      </div>
+
+      <!-- Messages -->
+      <div id="chatMessages" class="flex-1 overflow-y-auto p-5 chat-scroll bg-[#f9fafb]"></div>
+
+      <!-- Input -->
+      <div class="border-t border-gray-100 p-3 sm:p-4 bg-white flex-shrink-0">
+        <form id="chatForm" class="flex items-end gap-2">
+          <div class="flex-1 relative">
+            <textarea id="chatInput" rows="1" placeholder="Type your message..."
+                      class="w-full border border-gray-200 rounded-xl px-4 py-3 text-[13px] outline-none focus:border-[#E21B2D] focus:ring-3 focus:ring-[#E21B2D]/10 resize-none max-h-[100px]"
+                      style="min-height:44px;"></textarea>
+          </div>
+          <button type="submit" class="w-11 h-11 rounded-xl bg-[#E21B2D] hover:bg-[#c41525] flex items-center justify-center flex-shrink-0 shadow-md transition-all">
+            <i data-lucide="send" class="w-4.5 h-4.5 text-white"></i>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ MESSAGE CONTEXT MENU ═══ -->
+  <div id="msgMenu" class="hidden fixed z-[200] bg-white rounded-xl shadow-2xl border border-gray-100 py-1.5 min-w-[180px]">
+    <button id="menuDeleteMe" class="w-full flex items-center gap-2.5 px-4 py-2 text-[12.5px] hover:bg-gray-50 transition-colors text-left">
+      <i data-lucide="trash" class="w-3.5 h-3.5 text-[#6b7280]"></i>
+      <span>Delete for me</span>
+    </button>
+    <button id="menuDeleteAll" class="w-full flex items-center gap-2.5 px-4 py-2 text-[12.5px] hover:bg-red-50 transition-colors text-left text-[#E21B2D]">
+      <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+      <span>Delete for everyone</span>
+    </button>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/guard.js"></script>
+  <script src="../js/provider-admin.js"></script>
+  <script>lucide.createIcons();</script>
+
+</body>
+</html>

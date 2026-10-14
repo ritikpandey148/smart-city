@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Assigned Reports — myBMC</title>
+
+  <link rel="icon" type="image/png" href="../assets/images/smart-city-logo.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    body { margin: 0; background: #f0f1f3; }
+
+    .spinner, .spinner-sm {
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    .spinner { width: 20px; height: 20px; }
+    .spinner-sm { width: 14px; height: 14px; border-width: 2px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #providerSidebar { background: #1a1d21; }
+    .side-link {
+      display: flex; align-items: center; gap: 14px;
+      padding: 11px 18px; border-radius: 10px;
+      font-size: 13.5px; font-weight: 500;
+      color: #cbd0d6; margin-bottom: 2px;
+      transition: all 0.2s ease;
+    }
+    .side-link:hover:not(.active) { background: rgba(255,255,255,0.05); color: #fff; }
+    .side-link.active { background: #E21B2D; color: #fff; box-shadow: 0 8px 20px -6px rgba(226,27,45,0.55); }
+    .side-link .side-badge {
+      margin-left: auto; font-size: 10px; font-weight: 700;
+      background: rgba(255,255,255,0.12); color: #fff;
+      padding: 2px 7px; border-radius: 8px;
+    }
+    .side-link.active .side-badge { background: rgba(255,255,255,0.25); }
+
+    .tab-btn { transition: all 0.2s; white-space: nowrap; }
+    #mobileDrawer { transition: transform 0.3s ease-out; }
+
+    .table-scroll { overflow-x: auto; }
+    .table-scroll::-webkit-scrollbar { height: 6px; }
+    .table-scroll::-webkit-scrollbar-thumb { background: #cbd0d6; border-radius: 10px; }
+
+    select.select-field {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+
+    ::selection { background: #E21B2D; color: white; }
+  </style>
+</head>
+
+<body class="min-h-screen">
+
+  <!-- SIDEBAR -->
+  <aside id="providerSidebar" class="hidden lg:flex fixed left-0 top-0 bottom-0 w-[230px] flex-col z-30">
+    <div class="px-5 pt-6 pb-5">
+      <div class="flex items-center gap-2.5">
+        <img src="../assets/images/smart-city-logo.png" class="w-11 h-11 object-contain bg-white rounded-full p-0.5" />
+        <div>
+          <div class="text-[13px] font-bold leading-tight text-white">SMART <span class="text-[#E21B2D]">CITY</span></div>
+          <div class="text-[9.5px] text-gray-400 leading-tight mt-0.5">Smart Citizen, Smart City</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="flex-1 px-3 overflow-y-auto pb-4">
+      <a href="dashboard.html" class="side-link"><i data-lucide="home" class="w-[17px] h-[17px]"></i><span>Dashboard</span></a>
+      <a href="reports.html" class="side-link active"><i data-lucide="clipboard-list" class="w-[17px] h-[17px]"></i><span>Assigned Reports</span></a>
+      <a href="reports.html?cat=garbage" class="side-link"><i data-lucide="trash-2" class="w-[17px] h-[17px]"></i><span>Garbage Reports</span></a>
+      <a href="reports.html?cat=pothole" class="side-link"><i data-lucide="construction" class="w-[17px] h-[17px]"></i><span>Pothole Reports</span></a>
+      <a href="reports.html?cat=others" class="side-link"><i data-lucide="layout-grid" class="w-[17px] h-[17px]"></i><span>Others Reports</span></a>
+      <a href="users.html" class="side-link"><i data-lucide="users" class="w-[17px] h-[17px]"></i><span>Users</span></a>
+      <a href="admin.html" class="side-link"><i data-lucide="shield-check" class="w-[17px] h-[17px]"></i><span>Admin</span></a>
+      <a href="notifications.html" class="side-link"><i data-lucide="bell" class="w-[17px] h-[17px]"></i><span>Notifications</span></a>
+      <a href="work-updates.html" class="side-link"><i data-lucide="activity" class="w-[17px] h-[17px]"></i><span>My Work Updates</span></a>
+      <div class="h-px bg-white/10 my-3"></div>
+      <a href="profile.html" class="side-link"><i data-lucide="user" class="w-[17px] h-[17px]"></i><span>Profile</span></a>
+      <button data-logout class="side-link w-full text-left hover:bg-red-500/10"><i data-lucide="log-out" class="w-[17px] h-[17px]"></i><span>Logout</span></button>
+    </nav>
+  </aside>
+
+  <!-- MOBILE DRAWER -->
+  <div id="drawerBackdrop" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 lg:hidden"></div>
+  <aside id="mobileDrawer" class="fixed left-0 top-0 bottom-0 w-[250px] bg-[#1a1d21] z-50 flex flex-col shadow-2xl" style="transform: translateX(-100%);">
+    <div class="px-5 pt-5 pb-4 flex items-center justify-between border-b border-white/10">
+      <div class="flex items-center gap-2">
+        <img src="../assets/images/smart-city-logo.png" class="w-9 h-9 object-contain bg-white rounded-full p-0.5" />
+        <span class="text-[13px] font-bold text-white">SMART <span class="text-[#E21B2D]">CITY</span></span>
+      </div>
+      <button id="drawerClose" class="p-1.5 hover:bg-white/10 rounded-lg"><i data-lucide="x" class="w-5 h-5 text-white"></i></button>
+    </div>
+    <nav class="flex-1 px-3 py-3 overflow-y-auto">
+      <a href="dashboard.html" class="side-link"><i data-lucide="home" class="w-[17px] h-[17px]"></i><span>Dashboard</span></a>
+      <a href="reports.html" class="side-link active"><i data-lucide="clipboard-list" class="w-[17px] h-[17px]"></i><span>Assigned Reports</span></a>
+      <a href="reports.html?cat=garbage" class="side-link"><i data-lucide="trash-2" class="w-[17px] h-[17px]"></i><span>Garbage Reports</span></a>
+      <a href="reports.html?cat=pothole" class="side-link"><i data-lucide="construction" class="w-[17px] h-[17px]"></i><span>Pothole Reports</span></a>
+      <a href="reports.html?cat=others" class="side-link"><i data-lucide="layout-grid" class="w-[17px] h-[17px]"></i><span>Others Reports</span></a>
+      <a href="users.html" class="side-link"><i data-lucide="users" class="w-[17px] h-[17px]"></i><span>Users</span></a>
+      <a href="admin.html" class="side-link"><i data-lucide="shield-check" class="w-[17px] h-[17px]"></i><span>Admin</span></a>
+      <a href="notifications.html" class="side-link"><i data-lucide="bell" class="w-[17px] h-[17px]"></i><span>Notifications</span></a>
+      <a href="work-updates.html" class="side-link"><i data-lucide="activity" class="w-[17px] h-[17px]"></i><span>My Work Updates</span></a>
+      <a href="profile.html" class="side-link"><i data-lucide="user" class="w-[17px] h-[17px]"></i><span>Profile</span></a>
+      <button data-logout class="side-link w-full text-left"><i data-lucide="log-out" class="w-[17px] h-[17px]"></i><span>Logout</span></button>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="lg:ml-[230px] min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-20 bg-white border-b border-gray-100">
+      <div class="px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+        <div class="flex items-center gap-3 min-w-0">
+          <button id="menuToggle" class="lg:hidden p-2 hover:bg-gray-100 rounded-lg flex-shrink-0">
+            <i data-lucide="menu" class="w-5 h-5 text-[#343A40]"></i>
+          </button>
+          <div class="min-w-0">
+            <h1 id="pageTitle" class="text-[16px] sm:text-[19px] font-bold text-[#1a1d21] leading-tight">Assigned Reports</h1>
+            <p id="pageSubtitle" class="text-[11.5px] text-[#6b7280] leading-tight truncate">All civic complaints reported by citizens</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <div class="hidden sm:flex items-center gap-2 pl-3">
+            <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center overflow-hidden shadow-sm border border-gray-200">
+              <img src="../assets/images/bmc-logo.png" alt="" class="w-full h-full object-contain p-0.5" onerror="this.style.display='none'" />
+            </div>
+            <div class="text-left">
+              <div class="text-[12px] font-bold text-[#1a1d21] leading-tight">myBMC</div>
+              <div class="text-[10px] text-[#6b7280] leading-tight">Service Provider</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="flex-1 p-4 sm:p-6 space-y-5">
+
+      <!-- Back -->
+      <button id="backBtn" class="flex items-center gap-2 bg-white hover:bg-gray-50 text-[#343A40] hover:text-[#E21B2D] text-[13px] font-medium px-4 py-2.5 rounded-full shadow-sm hover:shadow-md transition-all">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i>
+        <span>Back to Dashboard</span>
+      </button>
+
+      <!-- STAT CARDS -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+        <div class="bg-[#ffe5e8] rounded-2xl p-4 border border-[#fdd] flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+            <i data-lucide="clipboard-list" class="w-5 h-5 text-[#E21B2D]"></i>
+          </div>
+          <div>
+            <div id="statTotal" class="text-[22px] font-bold text-[#1a1d21] leading-none">0</div>
+            <div class="text-[11px] text-[#6b7280] mt-1">Total Reports</div>
+          </div>
+        </div>
+
+        <div class="bg-amber-50 rounded-2xl p-4 border border-amber-100 flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+            <i data-lucide="eye" class="w-5 h-5 text-amber-600"></i>
+          </div>
+          <div>
+            <div id="statReview" class="text-[22px] font-bold text-[#1a1d21] leading-none">0</div>
+            <div class="text-[11px] text-[#6b7280] mt-1">In Review</div>
+          </div>
+        </div>
+
+        <div class="bg-orange-50 rounded-2xl p-4 border border-orange-100 flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+            <i data-lucide="clock" class="w-5 h-5 text-orange-600"></i>
+          </div>
+          <div>
+            <div id="statProgress" class="text-[22px] font-bold text-[#1a1d21] leading-none">0</div>
+            <div class="text-[11px] text-[#6b7280] mt-1">In Progress</div>
+          </div>
+        </div>
+
+        <div class="bg-green-50 rounded-2xl p-4 border border-green-100 flex items-center gap-3">
+          <div class="w-11 h-11 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-green-600"></i>
+          </div>
+          <div>
+            <div id="statResolved" class="text-[22px] font-bold text-[#1a1d21] leading-none">0</div>
+            <div class="text-[11px] text-[#6b7280] mt-1">Resolved</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- TABLE CARD -->
+      <div class="bg-white rounded-2xl p-5 border border-gray-100">
+
+        <!-- Toolbar -->
+        <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-4">
+          <div class="relative flex-1">
+            <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"></i>
+            <input id="searchInput" type="text" placeholder="Search by Complaint ID, title, locality, user or username..."
+                   class="w-full border border-gray-200 rounded-xl pl-11 pr-4 py-2.5 text-[13px] outline-none focus:border-[#E21B2D] focus:ring-4 focus:ring-[#E21B2D]/10" />
+          </div>
+
+          <select id="statusFilter" class="select-field border border-gray-200 rounded-xl px-4 pr-9 py-2.5 text-[12.5px] font-medium text-[#343A40] bg-white outline-none cursor-pointer focus:border-[#E21B2D]">
+            <option value="all">All Status</option>
+            <option value="submitted">Submitted</option>
+            <option value="in_review">In Review</option>
+            <option value="in_progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+          </select>
+        </div>
+
+        <!-- Filter tabs -->
+        <div id="filterTabsWrap" class="flex gap-2 flex-wrap mb-4">
+          <button data-filter="all" class="tab-btn bg-[#E21B2D] text-white px-4 py-1.5 rounded-full text-[11.5px] font-semibold">All</button>
+          <button data-filter="garbage" class="tab-btn bg-gray-100 text-[#343A40] hover:bg-gray-200 px-4 py-1.5 rounded-full text-[11.5px] font-semibold">Garbage</button>
+          <button data-filter="pothole" class="tab-btn bg-gray-100 text-[#343A40] hover:bg-gray-200 px-4 py-1.5 rounded-full text-[11.5px] font-semibold">Potholes</button>
+          <button data-filter="others" class="tab-btn bg-gray-100 text-[#343A40] hover:bg-gray-200 px-4 py-1.5 rounded-full text-[11.5px] font-semibold">Others</button>
+          <span class="w-px bg-gray-200 mx-1 self-stretch"></span>
+          <button data-filter="submitted" class="tab-btn bg-gray-100 text-[#343A40] hover:bg-gray-200 px-4 py-1.5 rounded-full text-[11.5px] font-semibold">Submitted</button>
+          <button data-filter="in_review" class="tab-btn bg-gray-100 text-[#343A40] hover:bg-gray-200 px-4 py-1.5 rounded-full text-[11.5px] font-semibold">In Review</button>
+          <button data-filter="in_progress" class="tab-btn bg-gray-100 text-[#343A40] hover:bg-gray-200 px-4 py-1.5 rounded-full text-[11.5px] font-semibold">In Progress</button>
+          <button data-filter="resolved" class="tab-btn bg-gray-100 text-[#343A40] hover:bg-gray-200 px-4 py-1.5 rounded-full text-[11.5px] font-semibold">Resolved</button>
+        </div>
+
+        <!-- Table -->
+        <div class="table-scroll -mx-5 px-5">
+          <table class="w-full min-w-[1050px]">
+            <thead>
+              <tr class="text-left border-b border-gray-100">
+                <th class="py-3 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">#</th>
+                <th class="py-3 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">Image</th>
+                <th class="py-3 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">Complaint</th>
+                <th class="py-3 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">Title</th>
+                <th class="py-3 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">Reported By</th>
+                <th class="py-3 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">Location</th>
+                <th class="py-3 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">Date & Time</th>
+                <th class="py-3 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">Status</th>
+                <th class="py-3 px-3 text-[10.5px] uppercase tracking-wide font-bold text-[#9ca3af]">Action</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 pt-4 border-t border-gray-100">
+          <div id="paginationInfo" class="text-[11.5px] text-[#6b7280]">Showing 0 reports</div>
+          <div class="flex items-center gap-1.5">
+            <button id="pagePrev" class="w-8 h-8 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed">
+              <i data-lucide="chevron-left" class="w-4 h-4 text-[#343A40]"></i>
+            </button>
+            <div id="pageNumbers" class="flex items-center gap-1.5"></div>
+            <button id="pageNext" class="w-8 h-8 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 flex items-center justify-center disabled:opacity-40 disabled:cursor-not-allowed">
+              <i data-lucide="chevron-right" class="w-4 h-4 text-[#343A40]"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ═══ COMPLAINT DETAIL MODAL ═══ -->
+  <div id="complaintModal" class="hidden fixed inset-0 z-[100] items-center justify-center p-4">
+    <div data-backdrop class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+    <div class="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[92vh] overflow-y-auto">
+      <button data-close class="absolute top-4 right-4 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors z-10">
+        <i data-lucide="x" class="w-4 h-4 text-[#343A40]"></i>
+      </button>
+
+      <div class="p-5 sm:p-6">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-[#ffe5e8] flex items-center justify-center">
+            <i data-lucide="clipboard-list" class="w-5 h-5 text-[#E21B2D]"></i>
+          </div>
+          <div>
+            <h3 class="text-[17px] font-bold text-[#1a1d21]">Complaint Details</h3>
+            <p class="text-[11.5px] text-[#6b7280] mt-0.5">Review, update status and notify the user</p>
+          </div>
+        </div>
+
+        <div id="cmImageWrap" class="rounded-xl overflow-hidden mb-4 bg-gray-100 hidden">
+          <img id="cmImage" alt="" class="w-full h-56 object-cover" />
+        </div>
+
+        <div class="flex items-center gap-2 mb-3">
+          <span id="cmCategory" class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold">—</span>
+          <span class="text-[11.5px] font-mono text-[#6b7280]">#<span id="cmComplaintId">—</span></span>
+        </div>
+
+        <h2 id="cmTitle" class="text-[18px] font-bold text-[#1a1d21] leading-snug">—</h2>
+
+        <!-- Reported By -->
+        <div class="mt-4 p-3.5 bg-[#f9fafb] rounded-xl">
+          <div class="flex items-center gap-3">
+            <div id="cmUserAvatar" class="w-11 h-11 rounded-full bg-[#1a1d21] text-white flex items-center justify-center text-[15px] font-bold flex-shrink-0">?</div>
+            <div class="flex-1 min-w-0">
+              <div id="cmUserName" class="text-[13.5px] font-bold text-[#1a1d21] truncate">—</div>
+              <div class="flex items-center gap-2 mt-0.5">
+                <span id="cmUserHandle" class="text-[11px] text-[#6b7280]">—</span>
+                <span class="text-[10.5px] text-[#9ca3af]">•</span>
+                <span id="cmUserMobile" class="text-[11px] text-[#6b7280]">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info grid -->
+        <div class="grid grid-cols-2 gap-3 mt-4 text-[12px]">
+          <div>
+            <div class="text-[10.5px] uppercase tracking-wide font-semibold text-[#9ca3af] mb-0.5">Locality</div>
+            <div id="cmLocality" class="text-[#343A40] font-medium">—</div>
+          </div>
+          <div>
+            <div class="text-[10.5px] uppercase tracking-wide font-semibold text-[#9ca3af] mb-0.5">Pincode</div>
+            <div id="cmPincode" class="text-[#343A40] font-medium">—</div>
+          </div>
+          <div>
+            <div class="text-[10.5px] uppercase tracking-wide font-semibold text-[#9ca3af] mb-0.5">Submitted On</div>
+            <div id="cmDate" class="text-[#343A40] font-medium">—</div>
+          </div>
+          <div>
+            <div class="text-[10.5px] uppercase tracking-wide font-semibold text-[#9ca3af] mb-0.5">Nearby Landmark</div>
+            <div id="cmNearby" class="text-[#343A40] font-medium">—</div>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <div class="text-[10.5px] uppercase tracking-wide font-semibold text-[#9ca3af] mb-1">Description</div>
+          <p id="cmDescription" class="text-[12.5px] text-[#4a5057] leading-relaxed">—</p>
+        </div>
+
+        <!-- Update Status -->
+        <div class="mt-5 p-4 bg-[#f9fafb] rounded-xl border border-gray-100">
+          <div class="text-[12px] font-bold text-[#1a1d21] mb-3">Update Complaint Status</div>
+          <div>
+            <label class="block text-[11px] font-semibold text-[#1a1d21] mb-1.5">Status</label>
+            <select id="cmStatus" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-[12.5px] bg-white outline-none focus:border-[#E21B2D] focus:ring-3 focus:ring-[#E21B2D]/10 cursor-pointer">
+              <option value="submitted">Submitted</option>
+              <option value="in_review">In Review</option>
+              <option value="in_progress">In Progress</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+          <p class="text-[10.5px] text-[#9ca3af] mt-2">User will be notified about this status change automatically.</p>
+          <button id="cmUpdateBtn" class="mt-3 w-full flex items-center justify-center gap-2 bg-[#E21B2D] hover:bg-[#c41525] text-white font-semibold text-[12.5px] py-2.5 rounded-lg shadow-md transition-all">
+            <i data-lucide="check" class="w-4 h-4"></i>
+            <span>Update Status & Notify User</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mt-3">
+          <button id="cmMessageBtn" class="flex items-center justify-center gap-2 bg-white hover:bg-gray-50 border border-gray-200 text-[#343A40] font-semibold text-[12.5px] py-2.5 rounded-lg transition-all">
+            <i data-lucide="mail" class="w-4 h-4"></i>
+            <span>Message User</span>
+          </button>
+          <button data-close class="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-[#343A40] font-semibold text-[12.5px] py-2.5 rounded-lg transition-all">
+            <span>Close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/api.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/guard.js"></script>
+  <script src="../js/provider-reports.js"></script>
+  <script>lucide.createIcons();</script>
+
+</body>
+</html>
